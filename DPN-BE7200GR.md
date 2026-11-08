@@ -9,7 +9,7 @@ Build from pinned sources, with Nix installed:
 
 ```sh
 python3 dpn/tools/release/prepare_clean_base.py dpn/build/release --git-cache . --build --jobs 8
-dpn/build/release/tools/with_openwrt_env.sh python3 dpn/build/release/tools/release/build_layout4.py --build-id dpn-layout4-rc1
+dpn/build/release/tools/with_openwrt_env.sh python3 dpn/build/release/tools/release/build_layout4.py --build-id dpn-layout4-rc2
 ```
 
 Outputs are `dpn-be7200gr-factory-web.bin` and

@@ -41,6 +41,9 @@ This fork carries the DPN-BE7200GR installation and upgrade implementation under
 `dpn/`, based on the pinned upstream OpenWrt source. It retains the original
 bootloader and compact SSH recovery, with a 408 MiB raw UBI data region.
 
+Download the tested [RC2 installation bundle and both firmware formats](https://github.com/ManiaciaChao/openwrt-dpn-be7200gr/releases/tag/dpn-layout4-rc2).
+Read the release qualification notes before installing.
+
 Start with [installation](dpn/docs/generic-first-install.md),
 [build instructions](DPN-BE7200GR.md) and [owner backup instructions](dpn/docs/stock-backup.md).
 The two firmware formats are factory-Web first install and normal sysupgrade.
@@ -62,7 +65,7 @@ Build from pinned sources, with Nix installed:
 
 ```sh
 python3 dpn/tools/release/prepare_clean_base.py dpn/build/release --git-cache . --build --jobs 8
-dpn/build/release/tools/with_openwrt_env.sh python3 dpn/build/release/tools/release/build_layout4.py --build-id dpn-layout4-rc1
+dpn/build/release/tools/with_openwrt_env.sh python3 dpn/build/release/tools/release/build_layout4.py --build-id dpn-layout4-rc2
 ```
 
 Outputs are `dpn-be7200gr-factory-web.bin` and
