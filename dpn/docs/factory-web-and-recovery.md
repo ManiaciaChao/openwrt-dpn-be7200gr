@@ -17,12 +17,21 @@ the recovery-entry loader preflight with the same kernel/upgrade backend; migrat
 and final cold boot were verified separately. Do not relabel those receipts as
 an exact-byte test of a new candidate.
 
-The new factory RAM installer was assembled from public source after those
-experiments. Its 50 MiB-slot packaging, read-only filesystem extractor, per-device
-vault preparation and journaled install orchestration need a new end-to-end
-hardware receipt. Host sanitizer/synthetic tests are not substitutes for that.
-Small existing-vault Web reinstall and older layout3 pristine-Web tests are
-historical evidence, not qualification of this new first-install file.
+The RC2 factory RAM installer has now booted from the original Web path, generated
+an independent SSH identity and initialized the device-bound recovery/vault after
+an externally decrypt-verified backup. Actual NAND recovery boot, 408 MiB
+migration, normal boot, exact matching standard sysupgrade and final physical
+cold boot/WAN/LuCI verification passed. The exact de-identified receipt is
+artifacts/storage-layout/generic-factory-Web-and-sysupgrade-RC2.json.
+
+This first install imported the existing owner's AP/settings/keys explicitly in
+RAM after verifying fresh target key generation. Its host wrapper stopped on the
+TCP timeout after a successful recovery reboot; the remaining public stages were
+continued from that verified checkpoint. The timeout handling is fixed and unit
+regression tested. Do not describe this first run as a completely unassisted
+one-command install. The matching standard sysupgrade did complete without a
+manual checkpoint. Qualification remains one recorded zero-bad-block/empty-BMT
+unit/profile, not every unit/revision or power-loss scenario.
 
 Public images must never include the private REC/vault candidate used on the
 laboratory router. Each new unit exports its own original system/vendor state

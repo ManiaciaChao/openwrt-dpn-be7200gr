@@ -33,9 +33,13 @@ recovery, full original stock/vendor restoration, original Web recovery reinstal
 remigration, owner identity preservation and final physical cold boot have passed.
 Public de-identified receipts are separate from owner backup/log files.
 
-The newly assembled generic RAM factory installer needs its own complete hardware
-acceptance, including pristine LuCI password/key setup and the matching final
-sysupgrade. Older layout3 Web tests cannot qualify this new implementation.
+The RC2 generic RAM factory Web boot, public-key setup API, independent NAND
+recovery provisioning, expanded migration and matching standard sysupgrade have
+passed with final physical cold boot/WAN/LuCI checks. Existing owner settings
+were explicitly imported after fresh key generation. The first-install host
+reboot-timeout checkpoint and its fix are documented in the exact RC2 receipt;
+that run is not labeled fully unassisted. The standard upgrade required no
+manual checkpoint. Independent GitHub clean-build evidence is tracked separately.
 Writes currently require the recorded FORESEE geometry, zero bad blocks and
 empty BMT/RAWB. Unsupported NAND states fail closed, rather than guessing a mapping.
 

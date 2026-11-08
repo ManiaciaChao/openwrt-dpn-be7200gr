@@ -63,6 +63,8 @@ def main():
         'hardware_first_install_qualified': False, 'public_release_qualified': False}, indent=2)+'\n')
     shutil.copytree(R/'LICENSES', out/'LICENSES')
     shutil.copy2(R/'LICENSE-STATUS.md', out/'LICENSE-STATUS.md')
+    from package_layout4_set import add_installation_bundle
+    add_installation_bundle(out, R)
     print('LAYOUT4_BOTH_ARTIFACTS_ASSEMBLED_NO_DEVICE_OPERATION', out)
 
 if __name__ == '__main__':

@@ -17,8 +17,10 @@ The intended public downloads are:
 Read [installation](docs/generic-first-install.md), [stock backups](docs/stock-backup.md)
 and [storage layout](docs/storage-expansion.md). A complete local expanded-layout
 stock return/Web recovery reinstall/remigration and final physical cold boot have
-passed. The new generic factory RAM installer requires its own hardware acceptance;
-older layout3 Web receipts are not evidence for this new package. Current write
+passed. The RC2 generic factory RAM installer, independent NAND recovery, expanded
+normal boot, matching standard sysupgrade and final physical cold boot have now
+passed on this unit. The first install used a host reboot-timeout checkpoint,
+since corrected and regression tested; see the exact artifact receipt. Current write
 qualification covers one documented zero-bad-block/empty-BMT NAND profile.
 
 Build from a pinned clean base using [the build instructions](docs/clean-build.md).

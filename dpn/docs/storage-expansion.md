@@ -28,9 +28,11 @@ dual radios, original LuCI certificate and root login all passed. WAN negotiated
 | 448–512 MiB | 64 MiB | Entire original vendor-reserved/BMT tail, unchanged |
 
 The two data extents form one 408 MiB MTD concat. UBI reserves metadata and
-bad-block capacity; its static SquashFS root currently consumes 31 LEBs
-(7.5 MiB), leaving a 379 MiB dynamic rootfs_data volume. The mounted UBIFS overlay measures 360520 KiB (352.07 MiB) total and
-354644 KiB (346.33 MiB) available after owner configuration restoration.
+bad-block capacity; its static SquashFS root currently consumes 33 LEBs
+(about 8 MiB) in RC2, leaving a 378.5 MiB dynamic rootfs_data volume. The mounted
+RC2 UBIFS overlay measures 360052 KiB (351.61 MiB) total and 354180 KiB
+(345.88 MiB) available after owner configuration restoration. Earlier smaller
+root images measured 352.07 MiB total; raw partition geometry is unchanged.
 Those raw/volume sizes differ from final package-install capacity.
 
 The main root is standard UBI/SquashFS plus a UBIFS rootfs_data overlay. Packages

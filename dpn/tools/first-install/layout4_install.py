@@ -105,7 +105,7 @@ class Installer:
         self.ssh += ['root@'+args.host]
 
     def call(self, command, data=None, timeout=120):
-        q = subprocess.run(self.ssh+[command], input=data, capture_output=True, timeout=timeout)
+        q = subprocess.run(self.ssh+['set -e; '+command], input=data, capture_output=True, timeout=timeout)
         if q.returncode:
             # Never echo remote output: a failing script may have printed private data.
             error = self.p/('ssh-error-'+str(time.time_ns())+'.log')

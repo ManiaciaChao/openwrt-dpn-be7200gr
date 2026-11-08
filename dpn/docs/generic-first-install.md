@@ -5,8 +5,10 @@
 408 MiB 原始空间提供给 UBI。软件和配置位于标准 SquashFS/UBIFS overlay。
 
 当前单机已验证扩容、标准升级、SSH 恢复、完整回原厂、原厂 Web 重装恢复和再次迁移，
-包括移除 TTL 后的物理冷启动。新的通用 RAM 首装包已经实现并打包，
-其独立全流程硬件验收尚未完成；不得把旧版 Web 测试当作新包的测试。
+包括移除 TTL 后的物理冷启动。新的通用 RAM 首装包已经从原厂正常 Web 启动，并完成恢复安装、扩容、正常启动、
+同一 RC2 sysupgrade 包升级与最终物理冷启动。首轮主机脚本在成功重启到恢复后
+遇到 TCP 断开超时，经观察后从该检查点继续；现已修正并加入回归测试，
+本轮不声称完全无人干预的首装。详见对应 RC2 的去标识验收记录。
 支持范围仅为已记录的原厂 260317_1135 / AN7581 配置及 FORESEE F35SQB004G
 CD:53:53、512 MiB、4096+256 页/OOB、256 KiB 擦除块、空 BMT/RAWB、零坏块。
 其他状态拒绝现代 NAND 写入；当前没有为其他配置提供兼容承诺。
@@ -28,15 +30,22 @@ CD:53:53、512 MiB、4096+256 页/OOB、256 KiB 擦除块、空 BMT/RAWB、零�
    如能登录原厂 Dropbear，可提前做额外备份，参考 [原厂备份](stock-backup.md)。
    正常 Web 首装不要求原厂 root 凭据或 TTL；后面的 prepare 阶段会导出并验证
    保留的原厂完整槽及每机数据，成功前不会回收它们。
-2. 电脑直连路由器 LAN1，断开路由器 WAN 与其他上联。不要接共享交换机进行默认
-   DHCP 首装；安装期间保持供电。
+2. 电脑直连路由器 LAN1，断开路由器 WAN 与其他上联。暂时关闭电脑的 Wi-Fi
+   和其他会与 192.168.1.1 冲突的同网段连接，避免访问到上游同地址设备。
+   不要接共享交换机进行默认 DHCP 首装；安装期间保持供电。
 3. 用正常原厂网页账户登录固件升级页，上传 factory-web 一次，等待重启。
    原厂系统决定写另一槽，包中不强制选槽；不要因 HTTP 连接关闭重复上传。
 4. 打开 http://192.168.1.1/ 的 LuCI，设置 root 密码，在“系统 → 管理权”加入自己的
    SSH 公钥。WAN、无线保持关闭。此时系统和设置都在 RAM，尚未进行布局迁移；
    重启会丢失本次设置。
 5. 在这条物理隔离链路上核对并记录设备的 Ed25519 SSH 主机指纹，写入自己的
-   known_hosts 文件。安装工具使用严格主机身份检查，不关闭 host-key 校验。
+   known_hosts 文件。例如先运行下面的 SSH 命令，在确认物理直连的设备后接受
+   这次新主机指纹，随后安装工具始终严格检查它：
+
+```sh
+ssh -i OWNER_SSH_PRIVATE_KEY -o UserKnownHostsFile=OWNER_KNOWN_HOSTS root@192.168.1.1 'ubus call system board'
+```
+
 6. 运行仓库提供的首装工具。以下参数在每个阶段重复，具体地址、文件由所有者填写：
 
 ```sh
@@ -46,7 +55,8 @@ python3 tools/first-install/layout4_install.py prepare \
   --age-identity OWNER_AGE_IDENTITY_FILE
 ```
 
-在 GitHub fork 中，上面的工具路径相对于 dpn/ 目录；可先 cd dpn。
+若下载整合 ZIP，解压后直接使用其中 tools/ 路径，无需克隆整个 OpenWrt 仓库。
+若使用完整 GitHub fork，上面的工具路径相对于 dpn/ 目录；可先 cd dpn。
 会话目录必须位于所有 Git checkout 之外，并使用持久磁盘，例如放到自己的
 本地私有备份目录中。age-keygen -o OWNER_AGE_IDENTITY_FILE 可生成备份密钥，
 age-keygen -y OWNER_AGE_IDENTITY_FILE 输出 prepare 所需的公开 recipient。
@@ -79,6 +89,9 @@ verify
 
 阶段开始采用排他事务记录。出错或连接中断后不要删记录、自动重试、重复上传包；
 先查看该会话的私有日志与设备上已有作业。恢复材料保留在电脑上，不能只存在路由器中。
+
+安装完成后，可在 LuCI 配置 WAN 的 DHCP/PPPoE 或 AP 桥接模式，并设置自己的
+无线区域、名称和密码。新机默认 WAN 与无线关闭；未预置共享的管理身份或 Wi-Fi 密码。
 
 ## 后续升级与恢复
 

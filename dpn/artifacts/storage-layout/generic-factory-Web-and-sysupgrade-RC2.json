@@ -1,0 +1,44 @@
+{
+  "schema": "dpn-layout4-generic-factory-and-sysupgrade-RC2-v1",
+  "date": "2026-11-08",
+  "device": "D-Link DPN-BE7200GR",
+  "stock_profile": "260317_1135 / Linux 5.4.55 / lan_10G_4port_7581_config_dlink_singtel",
+  "NAND_profile": "FORESEE F35SQB004G CD:53:53; 512 MiB; 4096+256 page/OOB; 256 KiB erase; zero bad blocks; empty BMT/RAWB",
+  "files": {
+    "dpn-be7200gr-factory-web.bin": {
+      "bytes": 48689548,
+      "SHA256": "bc2d015b5d0237843a963ed573cd220aff21c27b3031f5f63d79300c84ad94d1"
+    },
+    "dpn-be7200gr-sysupgrade.bin": {
+      "bytes": 19015991,
+      "SHA256": "cbd71a97f944235cff6c0443caaa253e31427645f3d704789ea3270d3cc1fd2b"
+    }
+  },
+  "actual_normal_original_Web_upload_booted_generic_RAM_installer": true,
+  "no_existing_device_vault_required_by_factory_boot": true,
+  "fresh_target_SSH_identity_generated_without_embedded_owner_keys": true,
+  "factory_ART_EEPROM_and_MAC_read_on_target": true,
+  "owner_configuration_then_explicitly_imported_in_RAM_for_this_trial": true,
+  "external_per_device_backup_age_decrypt_byte_comparison_passed": true,
+  "compact_REC16_VLT4_provision_full_readback_and_492MiB_guard_passed": true,
+  "actual_independent_NAND_recovery_boot_and_owner_SSH_passed": true,
+  "UBI_408MiB_layout_migration_and_normal16_header_last_readback_passed": true,
+  "first_install_host_reboot_TCP_timeout_checkpoint_used": true,
+  "first_install_host_timeout_fixed_and_regression_tested": true,
+  "one_command_unassisted_first_install_claimed": false,
+  "exact_matching_standard_sysupgrade_without_manual_checkpoint_passed": true,
+  "owner_AP_SSH_and_LuCI_identity_preserved": true,
+  "dual_radios_up": true,
+  "physical_OFF_5s_ON_after_final_upgrade_passed": true,
+  "WAN_DHCP_external_IP_ping_and_DNS_passed": true,
+  "WAN_negotiated_Mbps": 2500,
+  "LuCI_original_TLS_certificate_and_known_root_password_login_passed": true,
+  "original_bootloader_ART_and_reserved_BMT_tail_preserved": true,
+  "new_REC_and_vault_match_preupgrade_baseline": true,
+  "overlay_total_KiB": 360052,
+  "overlay_available_KiB": 354180,
+  "serial_or_TTL_used": false,
+  "host_test_namespace_and_spare_NIC_cleaned": true,
+  "independent_GitHub_clean_build_status": "running; run 42461075176",
+  "qualification_scope": "one recorded unit/profile; release candidate; no physical power-cut or nonempty-BMT write qualification"
+}

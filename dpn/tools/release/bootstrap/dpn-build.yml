@@ -68,3 +68,5 @@ jobs:
             dpn/build/release/dist/layout4-candidate/manifest.json
             dpn/build/release/dist/layout4-candidate/LICENSES/
             dpn/build/release/dist/layout4-candidate/LICENSE-STATUS.md
+            dpn/build/release/dist/layout4-candidate/*.zip
+            dpn/build/release/dist/layout4-candidate/ZIP_SHA256SUMS
