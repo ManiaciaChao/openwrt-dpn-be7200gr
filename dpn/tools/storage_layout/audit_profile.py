@@ -19,7 +19,6 @@ def main():
         rootpw=next(l.split(':')[1] for l in (dest/'etc/shadow').read_text().splitlines() if l.startswith('root:'));assert rootpw in ['!','*']
         assert not (dest/'etc/config/wireless').read_bytes().strip()
         assert (dest/'etc/dpn-upgrade-layout').read_text().strip()=='4'
-        assert not (dest/'etc/dpn-factory-auto').exists() and not (dest/'etc/dpn-factory-installer').exists()
         for role in ['normal','recovery']:
             dt=(a.profile/(role+'.dtb')).read_bytes();assert b'local-mac-address\0' not in dt and b'mediatek,eeprom-data\0' not in dt
         assert not issues,issues

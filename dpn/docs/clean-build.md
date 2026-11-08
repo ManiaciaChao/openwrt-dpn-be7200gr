@@ -5,16 +5,13 @@ space. From this source tree:
 
 ```sh
 python3 tools/release/prepare_clean_base.py build/release --build --jobs 8
-build/release/tools/with_openwrt_env.sh python3 build/release/tools/release/build_layout4.py --build-id dpn-layout4-auto-v1
+build/release/tools/with_openwrt_env.sh python3 build/release/tools/release/build_layout4.py --build-id dpn-layout4-rc1
 ```
 
 The base step checks out the exact OpenWrt and feed commits, builds the toolchain,
 kernel and selected packages from source. The second builds the guarded native
 helpers, minimal early kernel, normal/recovery profiles, RAM factory installer
 and standard sysupgrade package. It does not contact or write to a router.
-The default factory installer runs automatically on the device; the published
-RC2 used an older host-assisted flow. New automatic images require their own
-hardware acceptance, regardless of their build ID.
 
 The two files and checksum/provenance manifests are placed under
 build/release/dist/layout4-candidate/. A new output directory is required;

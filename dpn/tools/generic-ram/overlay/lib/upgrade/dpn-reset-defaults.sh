@@ -7,13 +7,6 @@ mkdir -m 755 "$stage" "$stage/etc" "$stage/etc/config"
 mkdir -m 700 "$stage/etc/dropbear"
 cp "$owner"/dropbear/authorized_keys "$owner"/dropbear/dropbear_ed25519_host_key "$stage/etc/dropbear/"
 chmod 600 "$stage/etc/dropbear/"*
-# Automatic installs generate a per-device recovery client key. Retain the
-# owner's ability to export it after a normal physical factory reset as well.
-if [ -d "$owner/dpn-recovery" ] && [ ! -L "$owner/dpn-recovery" ]; then
- cp -a "$owner/dpn-recovery" "$stage/etc/"
- chmod 700 "$stage/etc/dpn-recovery"
- printf '/etc/dpn-recovery/\n' > "$stage/etc/sysupgrade.conf"
-fi
 cp "$defaults"/config/network "$defaults"/config/dhcp "$stage/etc/config/"
 uci -c "$stage/etc/config" -t "$stage/.uci" set network.lan.proto=static
 uci -c "$stage/etc/config" -t "$stage/.uci" set network.lan.ipaddr=192.168.1.1

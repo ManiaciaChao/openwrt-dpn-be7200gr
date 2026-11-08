@@ -3,10 +3,6 @@
 原厂 dump 属于设备所有者，包含配置与设备身份；本项目不提交、不公开分发。
 正常的官网下载升级包不等于全分区备份。
 
-完整原厂备份是 automatic 镜像刷机前的可选操作，不是安装前提。
-automatic 安装器不导出或保存完整原厂备份；需要完整回原厂能力的用户应提前自行备份。
-镜像自动保留的校准/必要恢复资料不能替代完整原厂槽和 vendor 备份。
-
 ## 优先使用已验证的原厂 Dropbear
 
 在已测试的原厂版本上，管理员认证后的 x_myset1.html 有独立 Dropbear Enable
@@ -38,15 +34,13 @@ sha256sum OWNER_PARTITION.bin
 
 ## RAM 首装器的迁移前备份
 
-本节仅适用于旧 RC2 / `host` 模式，不是新 automatic 镜像的必需步骤。
-
 新 factory-web 包的 RAM 首装流程另有 prepare 阶段，读取现代只读物理视图中的：
 完整另一原厂槽 50 MiB、vendor 状态 83.5 MiB、ART 3.5 MiB、bootloader 0.5 MiB、
 原厂保留尾部 64 MiB，以及本次设置和设备恢复资料。
 它生成 age 加密归档，并使用所有者提供的 identity 实际解密、逐字节核对，
 成功后才允许 provision。该备份是 ECC main-data，不是 raw/OOB 镜像。
 
-参考 [旧版首装步骤](host-first-install.md)。每台设备使用自己的备份与密钥；
+参考 [首装步骤](generic-first-install.md)。每台设备使用自己的备份与密钥；
 不要使用本项目实验机的备份，也不要把会话目录、age identity 或任何私钥上传 GitHub。
 
 ## 从独立 SSH 恢复环境回原厂
