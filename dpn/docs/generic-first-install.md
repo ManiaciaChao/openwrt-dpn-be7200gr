@@ -96,8 +96,8 @@ verify
 ## 后续升级与恢复
 
 通过 LuCI 或 sysupgrade 使用 layout4 sysupgrade 包。升级保存设置，要求配置中
-保有自己的 SSH 公钥和有效主机密钥。当前不支持 sysupgrade -n、清空配置后的
-自动重新认领或任意旧布局迁移。
+保有自己的 SSH 公钥和有效主机密钥。当前不支持 sysupgrade -n、删除全部身份后的
+自动重新认领或任意旧布局迁移。RC2 之后增加的实体 Reset 受控清配置流程见 [按键说明](buttons.md)。
 
 独立恢复使用 LAN 静态 192.168.1.1、密钥 SSH，不提供 DHCP、无线或 Web。
 恢复不依赖主 overlay。正常系统可通过 dpn-enter-recovery 与兼容升级包进入它。

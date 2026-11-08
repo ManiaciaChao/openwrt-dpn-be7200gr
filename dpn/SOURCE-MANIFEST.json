@@ -31,10 +31,10 @@
     "configs/release-base.config": "ba0e4ef90c0332e2fe0150f0b0cd8f982acaa5580414573938017beaf552f5d5",
     "configs/release-helper-sources.json": "d0ba81d23af467daf3f33dfa1b34a63fa067c7d4ab6f218811cb7293aca98343",
     "configs/release-sources.json": "f143bdc2713d71e7dbb962e7fb1f74f36a455d0d927e3e80e5833649ea2b7db0",
-    "docs/buttons.md": "1041028c89e1ae7596386f4334cad48ddeff40dc078e2756e7a776299c2d2049",
+    "docs/buttons.md": "f0073f5807d43feb4da66036cc2ec4dbe0fadcb4a12011a6ffe254703e10a79e",
     "docs/clean-build.md": "2e18cf73466dd4027bbbd83568a7e7728289975ccf905f8f404979ef6546d42d",
     "docs/factory-web-and-recovery.md": "b38231cf613465535151da1b850cd2fa0b5f3c1b6b28fba73b365b16553fb3a0",
-    "docs/generic-first-install.md": "1b460ae779b3f47c41aea5f1d8249ac143917af951a136c261f80d354109b7e3",
+    "docs/generic-first-install.md": "183f26af0f32719b27813d14f095eef37bab828ddce66301c90c4a05733ace6e",
     "docs/release-and-upstream.md": "ef973b42813ac943447e6b7b9fdda6aaf949437ce7618bb24116f6a5ece86493",
     "docs/stock-backup.md": "2b687abbdec8ddd24ef1412431d652a25119b9325d8fcfbb933f85b94a89512c",
     "docs/stock-web-upgrade-analysis.md": "15a34e010a62743d45697b9f8fa8579b0d985c290c96369d32967c8427185436",
@@ -145,7 +145,7 @@
     "tools/release/package_layout4_set.py": "19aa0b87fa02e1a96b1c29316104b4e70ff7f732aebbc2742fa619e4e90571c0",
     "tools/release/prepare_clean_base.py": "f45960c76c19447023260dfda03047428346dfa40de963a41568513f94341726",
     "tools/release/prepare_fork.py": "d337c40f4cb994723c55ad4d74eeb32f6647c4fa411d215ef4d411ab3c3eb7a4",
-    "tools/release/stage_source.py": "30ef531ece90c73c90ec0b9d144209f4842cf169c7cb7e66b0ee211636be0237",
+    "tools/release/stage_source.py": "f30a9536c3147a225c971feb894bd7d0b7a674079bc81160e6290db908338674",
     "tools/release/test_package_formats.py": "be668d7c0830d42e84e421c078ab2ee3425575e5cda1572d86e8673774a11074",
     "tools/release/test_source_stage.py": "dc489aff85f697c6b18441b7cc64f6323c8d087f3348cbc5f1877e7c520fc6fe",
     "tools/stock_return/inspect_image.py": "6a8eb88a5d80a0426516285da67889ba90e50ae07370acabf5252cf2982b55e1",
@@ -181,6 +181,7 @@
     "tools/storage_layout/vault_check.c": "6d41a3c280135f2824f5035247f68b0602ed5935cb87162fed70c1b90585c7dc",
     "tools/test_ummtk.py": "2cf4312c3ab4e517c2a407453b011ef265e01027ef14c6e034e91be544f2d78c",
     "tools/ummtk.py": "27171e9bf1f8a142aaf0e79fb247caf11ee55bc7766999ee31d1751bd8073ed4",
-    "tools/with_openwrt_env.sh": "9373d7b1fcaef2556ed982e4378537935595d75af666f6d8a14dd6a5858180f6"
+    "tools/with_openwrt_env.sh": "9373d7b1fcaef2556ed982e4378537935595d75af666f6d8a14dd6a5858180f6",
+    "artifacts/storage-layout/button-support-v1.json": "70b624f874a83d2375d27ba7757e7c151485fbdae9f796b6d2edf8fb6aca7a1e"
   }
 }

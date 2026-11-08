@@ -39,6 +39,8 @@ for n in ('local-standard-sysupgrade-v3.json','local-expanded-roundtrip-v2.json'
  files.append('artifacts/storage-layout/'+n)
 if (R/'artifacts/storage-layout/generic-factory-Web-and-sysupgrade-RC2.json').is_file():
  files.append('artifacts/storage-layout/generic-factory-Web-and-sysupgrade-RC2.json')
+if (R/'artifacts/storage-layout/button-support-v1.json').is_file():
+ files.append('artifacts/storage-layout/button-support-v1.json')
 manifest={}
 for name in sorted(set(files)):
  src=R/name
