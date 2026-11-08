@@ -1,0 +1,73 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-only
+export PATH=/usr/sbin:/usr/bin:/sbin:/bin
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+mount -t devtmpfs devtmpfs /dev
+exec </dev/console >/dev/console 2>&1
+if [ -r /etc/dpn-build-epoch ]; then
+ epoch=$(cat /etc/dpn-build-epoch)
+ case "$epoch" in *[!0-9]*|'') ;; *) [ "$(date +%s)" -ge "$epoch" ] || date -u -s "@$epoch";; esac
+fi
+. /lib/upgrade/dpn-early-watchdog.sh
+if ! dpn_watchdog_start; then echo DPN_EARLY_WATCHDOG_REFUSED; exec sh; fi
+# Factory data is registered before deferred Ethernet and radio probes run.
+if ! insmod /lib/modules/6.18.60/dpn_bmt_art.ko physical_index=0 || ! test -r /sys/bus/nvmem/devices/dpn-art/nvmem; then
+ echo DPN_GENERIC_FACTORY_DATA_REFUSED
+ exec sh
+fi
+# Production layout4 is independent of the old persistent CFG partition.
+if test -d /sys/firmware/devicetree/base/dpn-layout4; then
+ if test -e /sys/firmware/devicetree/base/dpn-layout4/factory-first-install; then
+  . /lib/upgrade/dpn-factory-ram-boot.sh
+  dpn_factory_ram_boot
+  echo DPN_FACTORY_RAM_INSTALLER_REFUSED
+  exec sh
+ fi
+ . /lib/upgrade/dpn-layout4-boot.sh
+ role=$(tr -d '\000' < /sys/firmware/devicetree/base/dpn-layout4/write-profile)
+ case "$role" in
+  normal)
+   dpn_layout4_normal_boot
+   echo DPN_LAYOUT4_NORMAL_BOOT_REFUSED
+   dpn_layout4_failure_cleanup || exec sh
+  ;;
+  recovery) ;;
+  *) echo DPN_LAYOUT4_INVALID_ROLE; exec sh;;
+ esac
+ . /lib/upgrade/dpn-vault-recovery.sh
+ dpn_vault_recovery
+ echo DPN_LAYOUT4_NAND_VAULT_RECOVERY_REFUSED
+ exec sh
+fi
+# Development entry is an explicit kernel command line plus per-device initrd.
+# The normal persistent boot never consumes recovery credentials from CFG here.
+case " $(cat /proc/cmdline) " in
+ *' dpn_vault_selftest=1 '*)
+  . /lib/upgrade/dpn-vault-recovery.sh
+  dpn_vault_recovery
+  echo DPN_INDEPENDENT_VAULT_RECOVERY_REFUSED
+  exec sh
+ ;;
+esac
+# The public recovery and installer profiles never enter this branch.
+if test -e /sys/firmware/devicetree/base/dpn-flash-layout/persistent-root; then
+ . /lib/upgrade/dpn-persistent-boot.sh
+ dpn_persistent_boot
+ echo DPN_GENERIC_PERSISTENT_BOOT_REFUSED
+ if test -e /sys/firmware/devicetree/base/dpn-flash-layout/network-recovery-capable; then
+  . /lib/upgrade/dpn-network-recovery.sh
+  dpn_network_recovery
+ fi
+ echo DPN_NETWORK_RECOVERY_REFUSED
+ exec sh
+fi
+mkdir -p /etc/dropbear
+if [ -f /etc/dpn-provision/authorized_keys ] && [ -f /etc/dpn-provision/host_ed25519_key ]; then
+ cp /etc/dpn-provision/authorized_keys /etc/dropbear/authorized_keys
+ cp /etc/dpn-provision/host_ed25519_key /etc/dropbear/dropbear_ed25519_host_key
+ chmod 600 /etc/dropbear/authorized_keys /etc/dropbear/dropbear_ed25519_host_key
+fi
+export INITRAMFS=1
+dpn_watchdog_handoff
+exec /sbin/init

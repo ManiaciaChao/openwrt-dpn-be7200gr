@@ -1,0 +1,105 @@
+--- a/drivers/mtd/nand/spi/core.c
++++ b/drivers/mtd/nand/spi/core.c
+@@ -21,6 +21,12 @@
+ #include <linux/spi/spi-mem.h>
+ #include <linux/mtd/mtk_bmt.h>
+ 
++/* Laboratory policy: physical NAND reads only, independent of DT partitions. */
++static bool dpn_nand_readonly(void)
++{
++	return of_machine_is_compatible("dlink,dpn-be7200gr-ram");
++}
++
+ int spinand_read_reg_op(struct spinand_device *spinand, u8 reg, u8 *val)
+ {
+ 	struct spi_mem_op op = SPINAND_GET_FEATURE_1S_1S_1S_OP(reg,
+@@ -40,6 +46,18 @@
+ 	struct spi_mem_op op = SPINAND_SET_FEATURE_1S_1S_1S_OP(reg,
+ 						      spinand->scratchbuf);
+ 
++	if (dpn_nand_readonly()) {
++		u8 old;
++		int ret = spinand_read_reg_op(spinand, reg, &old);
++
++		if (ret)
++			return ret;
++		if (old == val)
++			return 0;
++		/* Only volatile ECC enable may change. Preserve A0, D0, QE, OTP. */
++		if (reg != REG_CFG || ((old ^ val) & ~CFG_ECC_ENABLE))
++			return -EROFS;
++	}
+ 	*spinand->scratchbuf = val;
+ 	return spi_mem_exec_op(spinand->spimem, &op);
+ }
+@@ -374,6 +392,9 @@
+ {
+ 	struct spi_mem_op op = SPINAND_WR_EN_1S_0_0_OP;
+ 
++	if (dpn_nand_readonly())
++		return -EROFS;
++
+ 	return spi_mem_exec_op(spinand->spimem, &op);
+ }
+ 
+@@ -539,6 +560,9 @@
+ 	unsigned int row = nanddev_pos_to_row(nand, &req->pos);
+ 	struct spi_mem_op op = SPINAND_PROG_EXEC_1S_1S_0_OP(row);
+ 
++	if (dpn_nand_readonly())
++		return -EROFS;
++
+ 	return spi_mem_exec_op(spinand->spimem, &op);
+ }
+ 
+@@ -549,6 +573,9 @@
+ 	unsigned int row = nanddev_pos_to_row(nand, pos);
+ 	struct spi_mem_op op = SPINAND_BLK_ERASE_1S_1S_0_OP(row);
+ 
++	if (dpn_nand_readonly())
++		return -EROFS;
++
+ 	return spi_mem_exec_op(spinand->spimem, &op);
+ }
+ 
+@@ -1556,6 +1583,20 @@
+ 	if (ret)
+ 		goto manuf_cleanup;
+ 
++	if (dpn_nand_readonly()) {
++		u8 a0, b0, d0;
++
++		ret = spinand_read_reg_op(spinand, REG_BLOCK_LOCK, &a0);
++		if (!ret)
++			ret = spinand_read_reg_op(spinand, REG_CFG, &b0);
++		if (!ret)
++			ret = spinand_read_reg_op(spinand, 0xd0, &d0);
++		if (ret)
++			goto manuf_cleanup;
++		dev_info(dev, "DPN READONLY: A0=%02x B0=%02x D0=%02x; no unlock, no BMT, no program/erase\n", a0, b0, d0);
++		return 0;
++	}
++
+ 	/* After power up, all blocks are locked, so unlock them here. */
+ 	for (i = 0; i < nand->memorg.ntargets; i++) {
+ 		ret = spinand_select_target(spinand, i);
+@@ -1744,8 +1785,17 @@
+ 	if (ret)
+ 		return ret;
+ 
+-	mtk_bmt_attach(mtd);
+-	ret = mtd_device_register(mtd, NULL, 0);
++	if (dpn_nand_readonly()) {
++		mtd->flags &= ~MTD_WRITEABLE;
++		mtd->name = "dpn-physical-nand-ro";
++		/* No parser, UBI, partition, or vendor BMT metadata maintenance. */
++		static const char * const no_parsers[] = { NULL };
++
++		ret = mtd_device_parse_register(mtd, no_parsers, NULL, NULL, 0);
++	} else {
++		mtk_bmt_attach(mtd);
++		ret = mtd_device_register(mtd, NULL, 0);
++	}
+ 	if (ret)
+ 		goto err_spinand_cleanup;
+ 

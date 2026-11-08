@@ -1,0 +1,34 @@
+{
+  "commit": "a2dcb924f0897368b0b4f305cbf9808cdda90ce0",
+  "tag": "20261019",
+  "files": [
+    {
+      "path": "airoha/en7581_npu_rv32.bin",
+      "url": "https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/airoha/en7581_npu_rv32.bin?id=a2dcb924f0897368b0b4f305cbf9808cdda90ce0",
+      "bytes": 120272,
+      "sha256": "6e7b9cb9769398d5c0a603d758626719ee83610e0dd2a5bc0b66258e2ad1057f",
+      "git_blob": "d5843ad44199404be79b375b9baff9b816bcb5b2"
+    },
+    {
+      "path": "airoha/en7581_npu_data.bin",
+      "url": "https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/airoha/en7581_npu_data.bin?id=a2dcb924f0897368b0b4f305cbf9808cdda90ce0",
+      "bytes": 3100,
+      "sha256": "0e742e7bef0d8f4c1537d7c17de9b601274e42b18660dfde6deba81ac395c761",
+      "git_blob": "66fec6aa6d82e26211dfc0e35659526505e53aab"
+    },
+    {
+      "path": "LICENSES/LICENSE.airoha",
+      "url": "https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/LICENSES/LICENSE.airoha?id=a2dcb924f0897368b0b4f305cbf9808cdda90ce0",
+      "bytes": 556,
+      "sha256": "ad548ca0ffb91ec655de0f28e13089ef1cd4e0deabb2f15a9289194990e62252",
+      "git_blob": "82541b0d34209fa855cc0423b5cea1f318c5ddcf"
+    },
+    {
+      "path": "WHENCE",
+      "url": "https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/WHENCE?id=a2dcb924f0897368b0b4f305cbf9808cdda90ce0",
+      "bytes": 512203,
+      "sha256": "0dd59e46f1e5d33d112236b17cb6de9d8f46fbf8fd09685cb474eb70a55f4da1",
+      "git_blob": "04242261ac5200e6e5ed221fdeed50980689b143"
+    }
+  ]
+}

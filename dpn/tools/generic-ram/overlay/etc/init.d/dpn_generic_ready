@@ -1,0 +1,50 @@
+#!/bin/sh /etc/rc.common
+# SPDX-License-Identifier: GPL-2.0-only
+START=99
+boot() {
+ test -f /sys/bus/nvmem/devices/dpn-art/nvmem || return 1
+ if test -f /etc/dpn-vault-source; then
+  test -e /sys/class/net/br-lan || return 1
+  test ! -e /sys/module/dpn_storage || return 1
+  test ! -e /sys/class/ubi/ubi0 || return 1
+  for m in /sys/class/mtd/mtd[0-9]*; do
+   case "${m##*/}" in *ro) continue;; esac
+   f=$(cat "$m/flags") || return 1
+   test "$((f & 1024))" -eq 0 || return 1
+  done
+  echo READY > /tmp/dpn-vault-recovery.ready
+  echo DPN_INDEPENDENT_VAULT_RECOVERY_READY > /dev/console
+  return 0
+ fi
+ if test -d /sys/firmware/devicetree/base/dpn-layout4; then
+  test "$(cat /sys/class/mtd/mtd8/name)" = dpn-layout4-data || return 1
+  test "$(cat /sys/class/mtd/mtd8/size)" = 427819008 || return 1
+  test "$(cat /sys/module/dpn_layout4_storage/parameters/data_write)" = Y || return 1
+  grep -q ' /overlay ubifs ' /proc/mounts || return 1
+  grep -q ' / overlay ' /proc/mounts || return 1
+  test -f /tmp/dpn-wifi-auto.ready || return 1
+  echo READY > /tmp/dpn-layout4.ready
+  echo DPN_LAYOUT4_UBI_OVERLAY_READY > /dev/console
+  return 0
+ fi
+ if test -e /sys/firmware/devicetree/base/dpn-flash-layout/persistent-root; then
+  test -f /tmp/dpn-wifi-auto.ready || return 1
+  test "$(cat /sys/class/mtd/mtd2/name)" = dpn-rootfs || return 1
+  test "$(cat /sys/class/mtd/mtd3/name)" = dpn-config || return 1
+  grep -q ' /overlay ubifs ' /proc/mounts || return 1
+  echo READY > /tmp/dpn-generic.ready
+  echo DPN_GENERIC_PERSISTENT_READY > /dev/console
+  return 0
+ fi
+ test -e /sys/class/net/br-lan || return 1
+ for m in /sys/class/mtd/mtd[0-9]*; do
+  case "${m##*/}" in *ro) continue;; esac
+  f=$(cat "$m/flags") || return 1
+  test "$((f & 1024))" -eq 0 || return 1
+ done
+ if test -f /etc/dpn-provision/session; then
+  cp /etc/dpn-provision/session /tmp/dpn-session
+ fi
+ echo DPN_GENERIC_RAM_READY > /dev/console
+ echo READY > /tmp/dpn-generic.ready
+}

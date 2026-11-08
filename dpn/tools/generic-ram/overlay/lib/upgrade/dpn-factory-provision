@@ -1,0 +1,34 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-only
+# Called once by the owner-side installer after verified external backup.
+set -eu
+[ "$#" = 2 ]
+candidate=$1
+expected=$2
+[ -f /etc/dpn-factory-installer ]
+[ -e /sys/firmware/devicetree/base/dpn-layout4/factory-first-install ]
+[ ! -e /sys/class/ubi/ubi0 ]
+[ ! -e /sys/module/dpn_storage ]
+[ ! -e /tmp/dpn-factory-provision.started ]
+[ "$(wc -c < "$candidate")" = 20971520 ]
+[ "$(sha256sum "$candidate" | cut -d ' ' -f 1)" = "$expected" ]
+. /lib/upgrade/dpn-layout4-upgrade.sh
+dpn_l4_reload provision=1
+/usr/libexec/dpn-provision-recovery --snapshot /dev/mtd9 "$candidate" "$expected" /tmp/dpn-factory-provision.guard /dev/mtd0
+# Native full vault validation, not just a self-consistent header.
+dd if="$candidate" of=/tmp/dpn-factory-vault bs=262144 skip=64 count=16 2>/dev/null
+/usr/libexec/dpn-vault-check --check /tmp/dpn-factory-vault /sys/bus/nvmem/devices/dpn-art/nvmem
+rm /tmp/dpn-factory-vault
+# noclobber is the transaction boundary; failures must be inspected, not retried.
+(set -C; printf 'STARTED\n' > /tmp/dpn-factory-provision.started)
+/usr/libexec/dpn-provision-recovery --write /dev/mtd9 "$candidate" "$expected" /tmp/dpn-factory-provision.guard /dev/mtd0
+dpn_l4_reload
+/usr/libexec/dpn-vault-check --check /dev/mtd3ro /sys/bus/nvmem/devices/dpn-art/nvmem
+mkdir /tmp/dpn-factory-select
+dd if=/dev/mtd0 of=/tmp/dpn-factory-select/ART bs=262144 skip=1778 count=14 2>/dev/null
+printf 0 | dd of=/tmp/dpn-factory-select/ART bs=1 seek=3407872 conv=notrunc 2>/dev/null
+DPN_L4_ART_SHA=$(sha256sum /tmp/dpn-factory-select/ART); DPN_L4_ART_SHA=${DPN_L4_ART_SHA%% *}
+dpn_l4_select 1
+printf 'FACTORY_RECOVERY_AND_VAULT_VERIFIED\n' > /tmp/dpn-factory-provision.complete
+sync
+# Reboot is issued separately after the host has downloaded the completion proof.

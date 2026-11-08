@@ -1,0 +1,24 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-only
+# An existing valid sysupgrade bundle lets procd validate the device normally;
+# the explicit alternate command only selects recovery, never installs it.
+set -e
+[ "$#" = 1 ] && [ "$(id -u)" = 0 ]
+[ -f /tmp/dpn-layout4.ready ]
+[ -x /lib/upgrade/dpn-layout4-enter-recovery ]
+sysupgrade -T "$1"
+. /lib/functions.sh
+. /lib/upgrade/common.sh
+. /usr/share/libubox/jshn.sh
+# Shared libraries already copied by install_file can yield status 1.
+install_bin /sbin/upgraded || :
+[ -x "$RAM_ROOT/sbin/upgraded" ]
+chroot "$RAM_ROOT" /lib/ld-musl-aarch64.so.1 --list /sbin/upgraded >/dev/null
+json_init
+json_add_string prefix "$RAM_ROOT"
+json_add_string path "$1"
+json_add_string command /lib/upgrade/dpn-layout4-enter-recovery
+json_add_object options
+json_add_int save_partitions 1
+json_close_object
+ubus call system sysupgrade "$(json_dump)"

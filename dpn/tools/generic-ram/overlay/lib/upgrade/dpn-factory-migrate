@@ -1,0 +1,15 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-only
+# Runs in independently booted NAND recovery, never in the factory installer.
+set -eu
+[ "$#" = 4 ]
+[ "$(cat /etc/dpn-vault-source)" = NAND_DEVICE_BOUND_VAULT ]
+[ -f /tmp/dpn-vault-recovery.ready ]
+[ ! -e /tmp/dpn-factory-migrate.started ]
+. /lib/upgrade/dpn-layout4-upgrade.sh
+mkdir "$4"
+/usr/libexec/dpn-image4-check "$1" "$2" normal
+(set -C; printf 'STARTED\n' > /tmp/dpn-factory-migrate.started)
+dpn_l4_install "$1" "$2" "$3" "$4"
+printf 'FACTORY_LAYOUT4_INSTALLED_AND_READBACK_VERIFIED\n' > /tmp/dpn-factory-migrate.complete
+sync

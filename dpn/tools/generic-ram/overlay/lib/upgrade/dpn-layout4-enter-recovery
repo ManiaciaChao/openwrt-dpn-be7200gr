@@ -1,0 +1,20 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-only
+# Executed only after procd's normal RAM pivot and process shutdown.
+. /lib/functions.sh
+. /lib/upgrade/dpn-generic-upgrade.sh
+. /lib/upgrade/dpn-layout4-upgrade.sh
+if [ -e /dev/ubiblock0_0 ]; then ubiblock --remove /dev/ubi0_0 || dpn_generic_abort recovery-root-block-busy; fi
+ubidetach -d 0 || dpn_generic_abort recovery-data-busy
+dpn_l4_reload || dpn_generic_abort recovery-readonly-view
+/usr/libexec/dpn-vault-check --check /dev/mtd3ro /sys/bus/nvmem/devices/dpn-art/nvmem || dpn_generic_abort invalid-vault
+dir=$(mktemp -d /tmp/dpn-l4-enter.XXXXXX) || dpn_generic_abort recovery-staging
+dd if=/dev/mtd2ro of="$dir/recovery16" bs=262144 count=64 2>/dev/null || dpn_generic_abort recovery-read
+/usr/libexec/dpn-image4-check "$dir/recovery16" - recovery || dpn_generic_abort invalid-recovery
+dd if=/dev/mtd0 of="$dir/ART" bs=262144 skip=1778 count=14 2>/dev/null || dpn_generic_abort ART-read
+printf 0 | dd of="$dir/ART" bs=1 seek=3407872 conv=notrunc 2>/dev/null || dpn_generic_abort ART-normalize
+DPN_L4_ART_SHA=$(sha256sum "$dir/ART");DPN_L4_ART_SHA=${DPN_L4_ART_SHA%% *}
+dpn_l4_select 1 || dpn_generic_abort selector-refused
+sync
+echo b > /proc/sysrq-trigger
+dpn_generic_abort restart-returned

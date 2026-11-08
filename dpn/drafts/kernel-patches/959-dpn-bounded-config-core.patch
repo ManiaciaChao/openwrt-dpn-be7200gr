@@ -1,0 +1,100 @@
+--- a/drivers/mtd/nand/spi/core.c
++++ b/drivers/mtd/nand/spi/core.c
+@@ -20,11 +20,17 @@
+ #include <linux/spi/spi.h>
+ #include <linux/spi/spi-mem.h>
+ #include <linux/mtd/mtk_bmt.h>
++#include <linux/mtd/dpn_persist_guard.h>
+ 
+ /* Laboratory policy: physical NAND reads only, independent of DT partitions. */
+ static bool dpn_nand_readonly(void)
+ {
+ 	return of_machine_is_compatible("dlink,dpn-be7200gr-ram");
++}
++
++static bool dpn_persistent(void)
++{
++	return of_machine_is_compatible("dlink,dpn-be7200gr-persist");
+ }
+ 
+ int spinand_read_reg_op(struct spinand_device *spinand, u8 reg, u8 *val)
+@@ -392,7 +398,7 @@
+ {
+ 	struct spi_mem_op op = SPINAND_WR_EN_1S_0_0_OP;
+ 
+-	if (dpn_nand_readonly())
++	if (dpn_nand_readonly() && !dpn_persistent())
+ 		return -EROFS;
+ 
+ 	return spi_mem_exec_op(spinand->spimem, &op);
+@@ -512,6 +518,8 @@
+ 	 * ECC engines ->prepare_io_req() callback.
+ 	 */
+ 	nbytes = nanddev_page_size(nand) + nanddev_per_page_oobsize(nand);
++	if (dpn_persistent() && req->mode != MTD_OPS_RAW)
++		nbytes = nanddev_page_size(nand) + 128;
+ 	memset(spinand->databuf, 0xff, nanddev_page_size(nand));
+ 
+ 	if (req->datalen)
+@@ -560,7 +568,8 @@
+ 	unsigned int row = nanddev_pos_to_row(nand, &req->pos);
+ 	struct spi_mem_op op = SPINAND_PROG_EXEC_1S_1S_0_OP(row);
+ 
+-	if (dpn_nand_readonly())
++	if (dpn_nand_readonly() &&
++	    (!dpn_persistent() || !dpn_cfg_row(row, false)))
+ 		return -EROFS;
+ 
+ 	return spi_mem_exec_op(spinand->spimem, &op);
+@@ -573,7 +582,8 @@
+ 	unsigned int row = nanddev_pos_to_row(nand, pos);
+ 	struct spi_mem_op op = SPINAND_BLK_ERASE_1S_1S_0_OP(row);
+ 
+-	if (dpn_nand_readonly())
++	if (dpn_nand_readonly() &&
++	    (!dpn_persistent() || !dpn_cfg_row(row, true)))
+ 		return -EROFS;
+ 
+ 	return spi_mem_exec_op(spinand->spimem, &op);
+@@ -713,6 +723,10 @@
+ 	u8 status;
+ 	int ret;
+ 
++	if (dpn_nand_readonly() &&
++	    (!dpn_persistent() || !dpn_cfg_row(nanddev_pos_to_row(nand, &req->pos), false)))
++		return -EROFS;
++
+ 	ret = nand_ecc_prepare_io_req(nand, (struct nand_page_io_req *)req);
+ 	if (ret)
+ 		return ret;
+@@ -987,6 +1001,10 @@
+ 	bool disable_ecc = false;
+ 	int ret = 0;
+ 
++	if (dpn_nand_readonly() &&
++	    (!dpn_persistent() || to < 0 || !dpn_cfg_range(to, ops->len ? ops->len : 1)))
++		return -EROFS;
++
+ 	if (ops->mode == MTD_OPS_RAW || !mtd->ooblayout)
+ 		disable_ecc = true;
+ 
+@@ -1132,6 +1150,10 @@
+ {
+ 	struct spinand_device *spinand = mtd_to_spinand(mtd);
+ 	int ret;
++
++	if (dpn_nand_readonly() &&
++	    (!dpn_persistent() || !dpn_cfg_range(einfo->addr, einfo->len)))
++		return -EROFS;
+ 
+ 	mutex_lock(&spinand->lock);
+ 	ret = nanddev_mtd_erase(mtd, einfo);
+@@ -1593,7 +1615,7 @@
+ 			ret = spinand_read_reg_op(spinand, 0xd0, &d0);
+ 		if (ret)
+ 			goto manuf_cleanup;
+-		dev_info(dev, "DPN READONLY: A0=%02x B0=%02x D0=%02x; no unlock, no BMT, no program/erase\n", a0, b0, d0);
++		dev_info(dev, "DPN %s: A0=%02x B0=%02x D0=%02x; physical RO, no unlock/BMT; bounded config policy\n", dpn_persistent() ? "BOUNDED_CONFIG" : "READONLY", a0, b0, d0);
+ 		return 0;
+ 	}
+ 

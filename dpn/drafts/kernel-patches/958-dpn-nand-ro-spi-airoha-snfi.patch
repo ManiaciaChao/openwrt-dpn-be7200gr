@@ -1,0 +1,45 @@
+--- a/drivers/spi/spi-airoha-snfi.c
++++ b/drivers/spi/spi-airoha-snfi.c
+@@ -16,6 +16,7 @@
+ #include <linux/minmax.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
+ #include <linux/regmap.h>
+@@ -756,6 +757,9 @@
+ 	size_t bytes;
+ 	int err;
+ 
++	if (of_machine_is_compatible("dlink,dpn-be7200gr-ram"))
++		return -EROFS;
++
+ 	as_ctrl = spi_controller_get_devdata(spi->controller);
+ 
+ 	/* minimum oob size is 64 */
+@@ -937,6 +941,24 @@
+ 	u8 buf[20], *data;
+ 	int i, err;
+ 
++	if (of_machine_is_compatible("dlink,dpn-be7200gr-ram")) {
++		/* Reject every opcode except reads/reset and guarded ECC config. */
++		switch (op->cmd.opcode) {
++		case 0x9f: case 0x0f: case 0x13: case 0x03: case 0x0b:
++		case 0x3b: case 0x6b: case 0xff:
++			if (op->data.nbytes && op->data.dir == SPI_MEM_DATA_OUT)
++				return -EROFS;
++			break;
++		case 0x1f:
++			if (op->addr.val != 0xb0 || op->data.nbytes != 1 ||
++			    op->data.dir != SPI_MEM_DATA_OUT)
++				return -EROFS;
++			break;
++		default:
++			return -EROFS;
++		}
++	}
++
+ 	as_ctrl = spi_controller_get_devdata(mem->spi->controller);
+ 
+ 	op_len = op->cmd.nbytes;

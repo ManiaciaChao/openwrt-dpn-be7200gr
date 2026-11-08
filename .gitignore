@@ -36,3 +36,11 @@ git-src
 .ccache
 .sccache
 .vscode*
+
+# DPN local build and owner sessions
+/dpn/build/
+/dpn/dist/
+/dpn/openwrt/
+/dpn/firmware/
+/dpn/backups/
+/dpn/owner-session*/

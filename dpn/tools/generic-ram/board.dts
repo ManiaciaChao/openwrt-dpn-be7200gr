@@ -1,0 +1,229 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+/* Generic RAM recovery: runtime ART NVMEM, no embedded device identity. */
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+/dts-v1/;
+#include "an7581.dtsi"
+
+/ {
+	model = "D-Link DPN-BE7200GR (experimental RAM only)";
+	compatible = "dlink,dpn-be7200gr-ram", "airoha,an7581", "airoha,en7581";
+
+	aliases {
+		serial0 = &uart1;
+	};
+
+	chosen {
+		stdout-path = "serial0:115200n8";
+		bootargs = "console=ttyS0,115200n8 earlycon loglevel=8";
+	};
+
+	memory@80000000 {
+		device_type = "memory";
+		reg = <0 0x80000000 0 0x20000000>;
+	};
+
+	reserved-memory {
+
+		vendor-probe-reserved@98000000 {
+			no-map;
+			reg = <0 0x98000000 0 0x08000000>;
+		};
+
+		optee@8a800000 {
+			no-map;
+			reg = <0 0x8a800000 0 0x800000>;
+		};
+	};
+};
+
+
+&cpufreq {
+	status = "disabled";
+};
+
+
+&snfi {
+	status = "disabled";
+};
+&spi_nand {
+	status = "disabled";
+};
+
+
+&eth {
+	status = "disabled";
+};
+&npu {
+	status = "disabled";
+};
+&pcie0 {
+	status = "disabled";
+};
+&pcie1 {
+	status = "disabled";
+};
+&pcie2 {
+	status = "disabled";
+};
+
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+#include <dt-bindings/phy/phy.h>
+/ {
+	model = "D-Link DPN-BE7200GR (experimental RAM Ethernet)";
+};
+
+&en7581_pinctrl {
+	gpio-ranges = <&en7581_pinctrl 0 13 50>;
+	dpn_mdio_pins: dpn-mdio-pins {
+		mux {
+			function = "mdio";
+			groups = "mdio";
+		};
+	};
+};
+
+&eth {
+	status = "okay";
+
+	/delete-property/ airoha,npu;
+};
+
+&gdm1 {
+	status = "okay";
+
+};
+
+&eth_pcs {
+	status = "okay";
+};
+
+&gdm4 {
+	status = "okay";
+	phy-handle = <&dpn_lan_phy>;
+	phy-mode = "usxgmii";
+	managed = "in-band-status";
+
+openwrt,netdev-name = "lan10";
+};
+
+&switch {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&dpn_mdio_pins>;
+};
+
+&mdio {
+	dpn_lan_phy: ethernet-phy@0 {
+		compatible = "ethernet-phy-ieee802.3-c45";
+		reg = <0>;
+		tx-polarity = <PHY_POL_INVERT>;
+		rx-polarity = <PHY_POL_NORMAL>;
+
+	};
+};
+
+&gsw_phy1 { status = "okay"; };
+&gsw_phy2 { status = "okay"; };
+&gsw_phy3 { status = "okay"; };
+&gsw_phy4 { status = "okay"; };
+&gsw_port1 { status = "okay"; label = "ge1"; };
+&gsw_port2 { status = "okay"; label = "ge2"; };
+&gsw_port3 { status = "okay"; label = "ge3"; };
+&gsw_port4 { status = "okay"; label = "ge4"; };
+
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+/ {
+	model = "D-Link DPN-BE7200GR (experimental RAM Wi-Fi)";
+};
+
+&pcie0 {
+	status = "okay";
+};
+
+&pcie1 {
+	status = "okay";
+
+	pcie@0,0 {
+		reg = <0 0 0 0 0>;
+		#address-cells = <3>;
+		#size-cells = <2>;
+		ranges;
+
+		wifi@0,0 {
+			compatible = "mediatek,mt76";
+			reg = <0 0 0 0 0>;
+			nvmem-cells = <&dpn_eeprom>, <&dpn_mac 1>;
+            nvmem-cell-names = "eeprom", "mac-address";
+            #address-cells = <1>;
+            #size-cells = <0>;
+            band@0 { reg = <0>; nvmem-cells = <&dpn_mac 1>; nvmem-cell-names = "mac-address"; };
+            band@1 { reg = <1>; nvmem-cells = <&dpn_mac 4>; nvmem-cell-names = "mac-address"; };
+		};
+	};
+};
+
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+/ {
+    model = "D-Link DPN-BE7200GR (RAM automatic Wi-Fi and ports)";
+    chosen {
+        bootargs = "console=ttyS0,115200n8 earlycon loglevel=7 rdinit=/init";
+    };
+};
+&pon_pcs { status = "okay"; };
+&gdm2 {
+    status = "okay";
+    managed = "in-band-status";
+    phy-handle = <&dpn_wan_phy>;
+    phy-mode = "usxgmii";
+
+openwrt,netdev-name = "wan10";
+};
+&mdio {
+    dpn_wan_phy: ethernet-phy@1 {
+        compatible = "ethernet-phy-ieee802.3-c45";
+        reg = <1>;
+        tx-polarity = <PHY_POL_INVERT>;
+        rx-polarity = <PHY_POL_NORMAL>;
+    };
+};
+
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+&npu { status = "okay"; };
+&eth { airoha,npu = <&npu>; };
+
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+&snfi { status = "okay"; };
+&spi_nand {
+    status = "okay";
+    spi-max-frequency = <20000000>;
+    spi-tx-bus-width = <1>;
+    spi-rx-bus-width = <1>;
+    read-only;
+};
+
+/ {
+ model = "D-Link DPN-BE7200GR (generic RAM recovery)";
+ dpn-art {
+  compatible = "dlink,dpn-be7200gr-art";
+  nvmem-layout {
+   compatible = "fixed-layout";
+   #address-cells = <1>;
+   #size-cells = <1>;
+   dpn_eeprom: eeprom@40000 { reg = <0x40000 0x1e00>; };
+   dpn_mac: mac@301055 {
+    compatible = "mac-base";
+    reg = <0x301055 0x11>;
+    #nvmem-cell-cells = <1>;
+   };
+  };
+ };
+};
+&gdm1 { nvmem-cells = <&dpn_mac 0>; nvmem-cell-names = "mac-address"; };
+&gdm4 { nvmem-cells = <&dpn_mac 2>; nvmem-cell-names = "mac-address"; };
+&gdm2 { nvmem-cells = <&dpn_mac 3>; nvmem-cell-names = "mac-address"; };

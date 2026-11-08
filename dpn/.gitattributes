@@ -1,0 +1,5 @@
+# Unified diff context contains structural whitespace; preserve patch bytes.
+*.patch -whitespace
+
+# Preserve third-party license notices byte for byte.
+LICENSES/third-party/** -whitespace

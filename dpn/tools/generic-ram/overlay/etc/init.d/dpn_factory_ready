@@ -1,0 +1,15 @@
+#!/bin/sh /etc/rc.common
+# SPDX-License-Identifier: GPL-2.0-only
+START=17
+boot() {
+ test -f /sys/bus/nvmem/devices/dpn-art/nvmem || return 1
+ # An existing owner configuration (for example br-ap) owns its bridge MAC.
+ test "$(uci -q get network.recovery_bridge.name)" = br-lan || return 0
+ # Set bridge identity before netifd brings the bridge up. Kernel-derived GDM
+ # identity is a native NVMEM cell from this device's own ART.
+ mac=$(dd if=/sys/bus/nvmem/devices/dpn-art/nvmem bs=4096 skip=769 count=1 2>/dev/null | dd bs=1 skip=85 count=17 2>/dev/null | tr A-F a-f)
+ test "${#mac}" -eq 17 || return 1
+ case "$mac" in ''|00:00:00:00:00:00|ff:ff:ff:ff:ff:ff) return 1;; esac
+ uci set network.recovery_bridge.macaddr="$mac"
+ uci commit network
+}

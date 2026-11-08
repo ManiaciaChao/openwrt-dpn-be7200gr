@@ -1,0 +1,9 @@
+{
+  "linux_firmware_commit": "a2dcb924f0897368b0b4f305cbf9808cdda90ce0",
+  "mt76_commit": "0936617dc529ff9da0385221d3fa6de732231177",
+  "license_files_SHA256": {
+    "LICENSE.airoha": "ad548ca0ffb91ec655de0f28e13089ef1cd4e0deabb2f15a9289194990e62252",
+    "mt76-firmware-LICENSE.txt": "77c0eb6b7915fdb17b328c1eff3d2074bff2025e88603ac59e01ffc07ba0b541",
+    "mt76-driver-LICENSE.txt": "62e2779395b3af6786cfe10a143a99383297c22387ef8588b2d563e79bb00d4c"
+  }
+}

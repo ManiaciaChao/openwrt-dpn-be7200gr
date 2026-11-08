@@ -1,0 +1,23 @@
+{
+  "schema": "dpn-layout4-expanded-stock-Web-and-OpenWrt-roundtrip-v2",
+  "expanded_408MiB_layout_stock50_vendor83_5_restore_actual_normal_boot_passed": true,
+  "original_factory_Web_reinstall_of_compact_recovery_passed": true,
+  "independent_NAND_recovery_owner_SSH_passed": true,
+  "standard_sysupgrade_without_manual_intervention_passed_on_v6_payload": true,
+  "final_v7_changes_only_recovery_client_loader_preflight": true,
+  "OpenWrt_408MiB_remigration_and_final_normal_boot_passed": true,
+  "owner_AP_configuration_and_SSH_LuCI_identity_preserved": true,
+  "dual_radios_up": true,
+  "overlay_total_KiB": 360520,
+  "overlay_available_KiB": 354644,
+  "original_bootloader_REC16_vault4_ART_and_vendor_BMT_tail_preserved": true,
+  "physical_coldboot_of_final_payload_pending": false,
+  "brand_new_device_factory_Web_installer_qualified": false,
+  "generic_nonempty_BMT_write_profile_qualified": false,
+  "public_release_qualified": false,
+  "final_physical_coldboot_and_flash_root_verified": true,
+  "WAN_uplink_DHCP_gateway_external_ping_DNS_passed": true,
+  "WAN_negotiated_Mbps": 2500,
+  "LuCI_original_HTTPS_certificate_and_owner_login_verified": true,
+  "host_spare_test_interface_restored": true
+}

@@ -1,0 +1,9 @@
+logs/
+firmware/private/
+.codex-attachments/
+backups/
+build/
+openwrt/
+dist/
+release-stage/
+tmp/

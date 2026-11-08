@@ -1,0 +1,72 @@
+{
+  "schema": 2,
+  "date": "2026-11-07",
+  "tested_units": 1,
+  "model": "D-Link DPN-BE7200GR",
+  "stock_firmware": "260317_1135 / Linux 5.4.55",
+  "NAND_profile": "FORESEE F35SQB004G; 512MiB; 4096+256 physical page/OOB; 256KiB erase; empty BMT/RAWB mapping; firmware windows good",
+  "validated": {
+    "normal_stock_Web_opposite_slot_install": true,
+    "public_factory_independent_FIP_boot": true,
+    "slot1_standard_sysupgrade": true,
+    "readonly_wired_RAM_owner_key_recovery": true,
+    "actual_first_256KiB_header_erase_and_automatic_stock0_fallback": true,
+    "stock_Web_repair_after_real_header_damage": true,
+    "automatic_RAM_to_normal_v7_repair_without_manual_configuration_finish": true,
+    "original_bootloader_retained": true,
+    "complete_50MiB_stock_slot0_retained": true,
+    "calibration_MAC_and_BMT_preserved": true,
+    "owner_config_and_identity_files_byte_identical": 10,
+    "automatic_dual_band_initialization": true,
+    "original_LuCI_TLS_identity_and_login_form_reachable": true,
+    "isolated_pinned_clean_source_build": true,
+    "pristine_256MiB_config_bank_NAND_initialization": true,
+    "pristine_direct_LAN_wire_DHCP_offer_and_ACK": true,
+    "pristine_LuCI_root_password_and_owner_public_key_setup": true,
+    "pristine_target_host_key_independent_of_previous_owner": true,
+    "first_standard_sysupgrade_after_pristine_stock_Web_install": true,
+    "first_upgrade_ten_new_owner_files_byte_identical": true,
+    "full_written_18MiB_ECC_prefix_matches_clean_build": true,
+    "explicit_original_owner_AP_identity_restoration_after_pristine_trial": true,
+    "original_owner_full_upper_regular_files_byte_identical": 36
+  },
+  "tested_builds": {
+    "normal_Web_install": "generic-slot-universal-v6",
+    "private_Web_recovery_selftest": "generic-slot-recovery-selftest-v7",
+    "final_normal_sysupgrade": "generic-slot-universal-v7",
+    "pristine_stock_Web_install": "generic-clean-v81",
+    "first_upgrade_after_pristine_install": "generic-clean-v81b"
+  },
+  "serial_input": {
+    "laboratory_factory_state_preparation": true,
+    "normal_Web_install": false,
+    "actual_fault_fallback": false,
+    "Web_and_normal_repair": false
+  },
+  "boundaries": {
+    "existing_UBI_configuration_reused": true,
+    "pristine_config_bank_hardware_test_pending": false,
+    "physical_power_cut_test_pending": true,
+    "reverse_stock_slot_topology_not_tested": true,
+    "other_firmware_or_NAND_states_not_qualified": true,
+    "clean_build_and_licensing_review_pending": true,
+    "public_binary_release_qualified": false,
+    "upstream_submission_not_complete": true,
+    "independent_clean_rebuild_pending": true,
+    "physical_power_cut_test_required_for_initial_release": false,
+    "uninterrupted_power_required": true,
+    "power_loss_safe_guarantee": false,
+    "same_unit_erased_config_test_not_second_unit_qualification": true
+  },
+  "public_prototype_packages": {
+    "dpn-be7200gr-sysupgrade.bin": {
+      "bytes": 16906512,
+      "sha256": "7772342da36759fbd3fd7abd1fdab7f9f94547aab780d1fb15cf7928517d8bb8"
+    },
+    "dpn-be7200gr-factory-web.bin": {
+      "bytes": 16903864,
+      "sha256": "2d942f58d7395b5137932ebb5722fd61c1108baced7f302d25bcdbb16558835f"
+    }
+  },
+  "public_prototype_package_build": "generic-clean-v81b"
+}

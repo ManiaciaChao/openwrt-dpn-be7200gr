@@ -1,0 +1,11 @@
+--- a/drivers/mtd/nand/spi/core.c
++++ b/drivers/mtd/nand/spi/core.c
+@@ -20,7 +20,7 @@
+ #include <linux/spi/spi.h>
+ #include <linux/spi/spi-mem.h>
+ #include <linux/mtd/mtk_bmt.h>
+-#include <linux/mtd/dpn_upgrade_guard.h>
++#include <linux/mtd/dpn_expand_guard.h>
+ 
+ /* Laboratory policy: physical NAND reads only, independent of DT partitions. */
+ static bool dpn_nand_readonly(void)

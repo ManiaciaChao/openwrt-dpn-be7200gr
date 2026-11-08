@@ -1,0 +1,66 @@
+name: DPN-BE7200GR
+on:
+  push:
+    paths: ['dpn/**', 'DPN-BE7200GR.md', '.github/workflows/dpn-build.yml']
+  pull_request:
+    paths: ['dpn/**', 'DPN-BE7200GR.md', '.github/workflows/dpn-build.yml']
+  workflow_dispatch:
+    inputs:
+      build_id:
+        description: Candidate build identifier
+        default: dpn-layout4-candidate
+        required: true
+      jobs:
+        description: Parallel build jobs
+        default: '4'
+        required: true
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Check public source boundary and installer guards
+        run: |
+          python3 dpn/tools/release/check_source_stage.py dpn
+          python3 dpn/tools/first-install/test_layout4_install.py
+          python3 dpn/tools/test_ummtk.py
+  images:
+    if: github.event_name == 'workflow_dispatch'
+    needs: source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    env:
+      BUILD_ID: ${{ inputs.build_id }}
+      BUILD_JOBS: ${{ inputs.jobs }}
+      NIX_REMOTE: daemon
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Prepare ephemeral runner and pinned Nix build environment
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          sudo apt-get update
+          sudo apt-get install --yes nix-bin
+          printf 'experimental-features = nix-command flakes\ntrusted-users = root %s\n' "$USER" | sudo tee -a /etc/nix/nix.conf >/dev/null
+          sudo systemctl restart nix-daemon.service
+          nix --version
+      - name: Build pinned base and both candidate formats
+        run: |
+          python3 dpn/tools/release/prepare_clean_base.py dpn/build/release --build --jobs "$BUILD_JOBS"
+          dpn/build/release/tools/with_openwrt_env.sh python3 dpn/build/release/tools/release/build_layout4.py --build-id "$BUILD_ID"
+      - name: Upload candidates and provenance, without publishing a release
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: dpn-be7200gr-candidates
+          if-no-files-found: error
+          path: |
+            dpn/build/release/dist/layout4-candidate/*.bin
+            dpn/build/release/dist/layout4-candidate/SHA256SUMS
+            dpn/build/release/dist/layout4-candidate/manifest.json
+            dpn/build/release/dist/layout4-candidate/LICENSES/
+            dpn/build/release/dist/layout4-candidate/LICENSE-STATUS.md

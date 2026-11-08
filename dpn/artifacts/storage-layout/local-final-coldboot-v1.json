@@ -1,0 +1,14 @@
+{
+  "physical_OFF_ON_report_requested_and_new_boot_observed": true,
+  "normal_flash_boot_no_kexec_loaded": true,
+  "WAN_uplink_carrier": true,
+  "WAN_link_Mbps": 2500,
+  "gateway_and_external_IP_pings_passed": true,
+  "DNS_lookup_passed": true,
+  "owner_config_SSH_LuCI_keys_and_dual_radios_verified": true,
+  "original_protected_88MiB_verified": true,
+  "LuCI_HTTPS_original_certificate_pin_and_page_passed": true,
+  "schema": "dpn-layout4-final-physical-coldboot-v1",
+  "host_test_interface_restored": true,
+  "public_release_qualified": false
+}

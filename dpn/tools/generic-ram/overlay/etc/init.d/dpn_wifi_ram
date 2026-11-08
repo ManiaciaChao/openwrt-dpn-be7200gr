@@ -1,0 +1,6 @@
+#!/bin/sh /etc/rc.common
+# SPDX-License-Identifier: GPL-2.0-only
+START=18
+boot() {
+ /usr/libexec/dpn-wifi-ram-init > /tmp/dpn-wifi-init.log 2>&1
+}

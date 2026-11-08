@@ -1,0 +1,37 @@
+--- a/drivers/spi/spi-airoha-snfi.c
++++ b/drivers/spi/spi-airoha-snfi.c
+@@ -17,6 +17,7 @@
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/of.h>
++#include <linux/mtd/dpn_persist_guard.h>
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
+ #include <linux/regmap.h>
+@@ -757,7 +758,8 @@
+ 	size_t bytes;
+ 	int err;
+ 
+-	if (of_machine_is_compatible("dlink,dpn-be7200gr-ram"))
++	if (of_machine_is_compatible("dlink,dpn-be7200gr-ram") &&
++	    !of_machine_is_compatible("dlink,dpn-be7200gr-persist"))
+ 		return -EROFS;
+ 
+ 	as_ctrl = spi_controller_get_devdata(spi->controller);
+@@ -949,6 +951,16 @@
+ 			if (op->data.nbytes && op->data.dir == SPI_MEM_DATA_OUT)
+ 				return -EROFS;
+ 			break;
++		case 0x06: case 0x04: /* write enable/disable; execution below is bounded */
++		case 0x02: case 0x84: /* single-lane cache load; cannot program a row */
++			if (!of_machine_is_compatible("dlink,dpn-be7200gr-persist"))
++				return -EROFS;
++			break;
++		case 0x10: case 0xd8:
++			if (!of_machine_is_compatible("dlink,dpn-be7200gr-persist") ||
++			    !dpn_cfg_row(op->addr.val, op->cmd.opcode == 0xd8))
++				return -EROFS;
++			break;
+ 		case 0x1f:
+ 			if (op->addr.val != 0xb0 || op->data.nbytes != 1 ||
+ 			    op->data.dir != SPI_MEM_DATA_OUT)

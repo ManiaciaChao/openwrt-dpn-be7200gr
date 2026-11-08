@@ -1,0 +1,65 @@
+--- a/drivers/mtd/nand/spi/core.c
++++ b/drivers/mtd/nand/spi/core.c
+@@ -20,7 +20,7 @@
+ #include <linux/spi/spi.h>
+ #include <linux/spi/spi-mem.h>
+ #include <linux/mtd/mtk_bmt.h>
+-#include <linux/mtd/dpn_persist_guard.h>
++#include <linux/mtd/dpn_upgrade_guard.h>
+ 
+ /* Laboratory policy: physical NAND reads only, independent of DT partitions. */
+ static bool dpn_nand_readonly(void)
+@@ -569,7 +569,7 @@
+ 	struct spi_mem_op op = SPINAND_PROG_EXEC_1S_1S_0_OP(row);
+ 
+ 	if (dpn_nand_readonly() &&
+-	    (!dpn_persistent() || !dpn_cfg_row(row, false)))
++	    (!dpn_persistent() || !dpn_write_row(row, false)))
+ 		return -EROFS;
+ 
+ 	return spi_mem_exec_op(spinand->spimem, &op);
+@@ -583,7 +583,7 @@
+ 	struct spi_mem_op op = SPINAND_BLK_ERASE_1S_1S_0_OP(row);
+ 
+ 	if (dpn_nand_readonly() &&
+-	    (!dpn_persistent() || !dpn_cfg_row(row, true)))
++	    (!dpn_persistent() || !dpn_write_row(row, true)))
+ 		return -EROFS;
+ 
+ 	return spi_mem_exec_op(spinand->spimem, &op);
+@@ -724,7 +724,7 @@
+ 	int ret;
+ 
+ 	if (dpn_nand_readonly() &&
+-	    (!dpn_persistent() || !dpn_cfg_row(nanddev_pos_to_row(nand, &req->pos), false)))
++	    (!dpn_persistent() || !dpn_write_row(nanddev_pos_to_row(nand, &req->pos), false)))
+ 		return -EROFS;
+ 
+ 	ret = nand_ecc_prepare_io_req(nand, (struct nand_page_io_req *)req);
+@@ -1002,7 +1002,7 @@
+ 	int ret = 0;
+ 
+ 	if (dpn_nand_readonly() &&
+-	    (!dpn_persistent() || to < 0 || !dpn_cfg_range(to, ops->len ? ops->len : 1)))
++	    (!dpn_persistent() || to < 0 || !dpn_write_range(to, ops->len ? ops->len : 1)))
+ 		return -EROFS;
+ 
+ 	if (ops->mode == MTD_OPS_RAW || !mtd->ooblayout)
+@@ -1152,7 +1152,7 @@
+ 	int ret;
+ 
+ 	if (dpn_nand_readonly() &&
+-	    (!dpn_persistent() || !dpn_cfg_range(einfo->addr, einfo->len)))
++	    (!dpn_persistent() || !dpn_write_range(einfo->addr, einfo->len)))
+ 		return -EROFS;
+ 
+ 	mutex_lock(&spinand->lock);
+@@ -1615,7 +1615,7 @@
+ 			ret = spinand_read_reg_op(spinand, 0xd0, &d0);
+ 		if (ret)
+ 			goto manuf_cleanup;
+-		dev_info(dev, "DPN %s: A0=%02x B0=%02x D0=%02x; physical RO, no unlock/BMT; bounded config policy\n", dpn_persistent() ? "BOUNDED_CONFIG" : "READONLY", a0, b0, d0);
++		dev_info(dev, "DPN %s: A0=%02x B0=%02x D0=%02x; physical RO, no unlock/BMT; bounded config/upgrade policy\n", dpn_persistent() ? "BOUNDED_CONFIG" : "READONLY", a0, b0, d0);
+ 		return 0;
+ 	}
+ 

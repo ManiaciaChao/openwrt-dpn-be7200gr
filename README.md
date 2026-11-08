@@ -1,3 +1,18 @@
+# OpenWrt for D-Link DPN-BE7200GR
+
+This fork carries the DPN-BE7200GR installation and upgrade implementation under
+`dpn/`, based on the pinned upstream OpenWrt source. It retains the original
+bootloader and compact SSH recovery, with a 408 MiB raw UBI data region.
+
+Start with [installation](dpn/docs/generic-first-install.md),
+[build instructions](DPN-BE7200GR.md) and [owner backup instructions](dpn/docs/stock-backup.md).
+The two firmware formats are factory-Web first install and normal sysupgrade.
+Qualification is limited to the documented NAND/stock profile; this is not an
+OpenWrt-maintainer-approved device port. Device backups and private keys are not
+part of this repository.
+
+---
+
 ![OpenWrt logo](include/logo.png)
 
 OpenWrt Project is a Linux operating system targeting embedded devices. Instead

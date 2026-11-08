@@ -1,0 +1,22 @@
+From: DPN-BE7200GR RAM experiment
+Subject: [PATCH] tools: find bash through PATH for NixOS build hosts
+
+all_errnos runs on the build host. NixOS provides bash in PATH rather than
+at /bin/bash.
+
+--- a/tools/all_errnos
++++ b/tools/all_errnos
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/usr/bin/env bash
+ 
+ # Derived from all_syscalls.
+ 
+--- a/tools/all_syscalls
++++ b/tools/all_syscalls
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/usr/bin/env bash
+ 
+ set -e
+ set -o pipefail

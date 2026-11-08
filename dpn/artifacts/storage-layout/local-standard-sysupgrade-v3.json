@@ -1,0 +1,16 @@
+{
+  "schema": "dpn-layout4-local-standard-sysupgrade-v3",
+  "standard_sysupgrade_CLI_and_tar_fwtool_metadata": true,
+  "tested_payload_SHA256": "f5a42ac06ccbbf0af3992c4ab3ceacaf014b0bc0df62017c11ac7fe911e90d87",
+  "actual_new_root_boot_and_hash_binding_passed": true,
+  "owner_configuration_keys_and_LuCI_identity_preserved": true,
+  "dual_radios_up": true,
+  "protected_bootloader_REC_vault_ART_BMT_88MiB_verified": true,
+  "overlay_total_KiB": 360520,
+  "overlay_available_KiB": 354644,
+  "no_serial_command_required_to_perform_upgrade": true,
+  "diagnostic_serial_CR_sent": true,
+  "no_manual_completion_required": true,
+  "actual_stage2_RAMFS_chroot_dependency_and_config_restore_audit_passed": true,
+  "public_release_qualified": false
+}

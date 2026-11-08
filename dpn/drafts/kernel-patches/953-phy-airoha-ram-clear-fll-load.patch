@@ -1,0 +1,21 @@
+Subject: [EXPERIMENTAL RAM ONLY] Clear FLL load after full software calibration
+
+Does not skip calibration. Single PHY-code change for this board only.
+Pending hardware validation; not a production fix.
+
+--- a/drivers/phy/airoha/phy-airoha-pcie.c
++++ b/drivers/phy/airoha/phy-airoha-pcie.c
+@@ -1172,6 +1172,13 @@
+ 	airoha_pcie_phy_set_rx_mode(pcie_phy);
+ 	/* Load K-Flow */
+ 	airoha_pcie_phy_load_kflow(pcie_phy);
++	/* RAM-only board diagnostic: match stock post-calibration FLL mode. */
++	if (of_machine_is_compatible("dlink,dpn-be7200gr-ram")) {
++		airoha_phy_pma0_clear_bits(pcie_phy, REG_PCIE_PMA_DIG_RESERVE_14,
++					   PCIE_FLL_LOAD_EN);
++		airoha_phy_pma1_clear_bits(pcie_phy, REG_PCIE_PMA_DIG_RESERVE_14,
++					   PCIE_FLL_LOAD_EN);
++	}
+ 	airoha_phy_pma0_clear_bits(pcie_phy, REG_PCIE_PMA_SS_DA_XPON_PWDB0,
+ 				   PCIE_DA_XPON_CDR_PR_PWDB);
+ 	airoha_phy_pma1_clear_bits(pcie_phy, REG_PCIE_PMA_SS_DA_XPON_PWDB0,
