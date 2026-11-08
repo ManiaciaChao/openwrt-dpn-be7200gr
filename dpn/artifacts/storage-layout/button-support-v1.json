@@ -18,7 +18,7 @@
   "standard_WPS_handler_software_invocation_opened_PBC": true,
   "PC_WPS_registrar_protocol_success_without_preconfigured_password": true,
   "PC_completed_post_WPS_association_and_DHCP": false,
-  "new_kernel_physical_button_press_test_completed": false,
+  "new_kernel_physical_button_press_test_completed": "Wi-Fi and Mesh passed; Reset remains untested",
   "reset_timing_and_failure_guards_host_tested": true,
   "reset_real_UCI_default_seed_and_SSH_identity_preservation_tested_in_target_RAM": true,
   "early_boot_directory_commit_eight_interruption_retry_cases_passed": true,
@@ -28,5 +28,11 @@
   "host_temporary_profile_deleted_and_original_radio_state_autoconnect_restored": true,
   "factory_candidate_packaged_but_exact_new_factory_Web_upload_not_tested": true,
   "public_release_qualified": false,
-  "scope": "development button update on one recorded zero-bad-block/empty-BMT unit; source and installed normal image; RC2 release assets unchanged"
+  "scope": "development button update on one recorded zero-bad-block/empty-BMT unit; source and installed normal image; RC2 release assets unchanged",
+  "new_kernel_physical_WiFi_off_and_on_test_passed": true,
+  "new_kernel_physical_Mesh_WPS_PBC_test_passed": true,
+  "physical_kernel_pressed_and_released_events_recorded": true,
+  "no_software_event_injected_in_physical_trial": true,
+  "physical_Reset_behavior_tested": false,
+  "owner_wireless_restored_byte_identical_after_physical_trial": true
 }

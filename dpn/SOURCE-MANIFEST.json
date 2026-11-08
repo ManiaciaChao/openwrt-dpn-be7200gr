@@ -31,7 +31,7 @@
     "configs/release-base.config": "ba0e4ef90c0332e2fe0150f0b0cd8f982acaa5580414573938017beaf552f5d5",
     "configs/release-helper-sources.json": "d0ba81d23af467daf3f33dfa1b34a63fa067c7d4ab6f218811cb7293aca98343",
     "configs/release-sources.json": "f143bdc2713d71e7dbb962e7fb1f74f36a455d0d927e3e80e5833649ea2b7db0",
-    "docs/buttons.md": "f0073f5807d43feb4da66036cc2ec4dbe0fadcb4a12011a6ffe254703e10a79e",
+    "docs/buttons.md": "8676dfeed9da2af13e4f6bdbc7c654d3ac357a76b19ce4298bf379313a1cf9fc",
     "docs/clean-build.md": "2e18cf73466dd4027bbbd83568a7e7728289975ccf905f8f404979ef6546d42d",
     "docs/factory-web-and-recovery.md": "b38231cf613465535151da1b850cd2fa0b5f3c1b6b28fba73b365b16553fb3a0",
     "docs/generic-first-install.md": "183f26af0f32719b27813d14f095eef37bab828ddce66301c90c4a05733ace6e",
@@ -182,6 +182,6 @@
     "tools/test_ummtk.py": "2cf4312c3ab4e517c2a407453b011ef265e01027ef14c6e034e91be544f2d78c",
     "tools/ummtk.py": "27171e9bf1f8a142aaf0e79fb247caf11ee55bc7766999ee31d1751bd8073ed4",
     "tools/with_openwrt_env.sh": "9373d7b1fcaef2556ed982e4378537935595d75af666f6d8a14dd6a5858180f6",
-    "artifacts/storage-layout/button-support-v1.json": "70b624f874a83d2375d27ba7757e7c151485fbdae9f796b6d2edf8fb6aca7a1e"
+    "artifacts/storage-layout/button-support-v1.json": "2abba434bede3dd3f08cc7b6b93caa38541858c4926ddc79c1b60ff3a2ba1540"
   }
 }
