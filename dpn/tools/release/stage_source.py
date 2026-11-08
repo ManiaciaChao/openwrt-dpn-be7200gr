@@ -34,7 +34,7 @@ storage_sources = [
  'test_provisioner.py','test_bootflag.py','test_expanded_return.py',
 ]
 files.extend('tools/storage_layout/'+n for n in storage_sources)
-files.extend(['tools/stock_return/test_inspect_image.py','tools/stock_return/inspect_image.py','docs/storage-expansion.md','docs/stock-backup.md'])
+files.extend(['tools/stock_return/test_inspect_image.py','tools/stock_return/inspect_image.py','docs/storage-expansion.md','docs/stock-backup.md','docs/buttons.md'])
 for n in ('local-standard-sysupgrade-v3.json','local-expanded-roundtrip-v2.json','local-final-coldboot-v1.json'):
  files.append('artifacts/storage-layout/'+n)
 if (R/'artifacts/storage-layout/generic-factory-Web-and-sysupgrade-RC2.json').is_file():

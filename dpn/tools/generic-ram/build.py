@@ -96,6 +96,13 @@ try:
   assert 'CONFIG_KEXEC_FILE=y\n' in actual, 'Development kexec_file_load was dropped by Kconfig'
   if a.development_kexec_legacy:assert 'CONFIG_KEXEC=y\n' in actual, 'Laboratory DTB handoff support was dropped by Kconfig'
  run([wrapper,'make','-C',str(K),'M='+str(C/'kernel'),'ARCH=arm64','CROSS_COMPILE='+cross,'-j8','modules'],'module.log')
+ # Use the pinned upstream OpenWrt driver, not a userspace GPIO polling daemon.
+ buttons=B/'gpio-button-hotplug';buttons.mkdir(exist_ok=True)
+ for name in ['Makefile','gpio-button-hotplug.c']:
+  shutil.copy2(R/'openwrt/package/kernel/gpio-button-hotplug/src'/name,buttons/name)
+ run([wrapper,'make','-C',str(K),'M='+str(buttons.resolve()),'ARCH=arm64','CROSS_COMPILE='+cross,'modules'],'button-module.log')
+ shutil.copy2(buttons/'gpio-button-hotplug.ko',ROOT/'lib/modules/6.18.60/gpio-button-hotplug.ko')
+ (ROOT/'etc/modules.d/30-gpio-button-hotplug').write_text('gpio-button-hotplug\n')
  for name in ['dpn_bmt_art.ko','dpn_storage.ko','dpn_stock_return.ko','dpn_layout4_storage.ko']:shutil.copy2(C/'kernel'/name,ROOT/'lib/modules/6.18.60'/name)
  subprocess.run([cross+'strip','--strip-debug',str(ROOT/'lib/modules/6.18.60/dpn_bmt_art.ko')],check=True)
  if a.persistent:

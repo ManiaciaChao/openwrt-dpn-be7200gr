@@ -27,6 +27,7 @@ jobs:
         run: |
           python3 dpn/tools/release/check_source_stage.py dpn
           python3 dpn/tools/first-install/test_layout4_install.py
+          python3 dpn/tools/generic-ram/test-buttons.py
           python3 dpn/tools/test_ummtk.py
   images:
     if: github.event_name == 'workflow_dispatch'

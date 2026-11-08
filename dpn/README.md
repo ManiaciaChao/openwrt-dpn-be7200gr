@@ -23,6 +23,9 @@ passed on this unit. The first install used a host reboot-timeout checkpoint,
 since corrected and regression tested; see the exact artifact receipt. Current write
 qualification covers one documented zero-bad-block/empty-BMT NAND profile.
 
+Post-RC2 button support and its validation boundary are documented in
+[buttons](docs/buttons.md). The published RC2 images predate this addition.
+
 Build from a pinned clean base using [the build instructions](docs/clean-build.md).
 Prepare a real upstream-based Git checkout for GitHub review with:
 

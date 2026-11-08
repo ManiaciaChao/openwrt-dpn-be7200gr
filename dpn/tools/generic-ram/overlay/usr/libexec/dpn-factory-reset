@@ -1,0 +1,24 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-only
+set -eu
+[ "$#" = 1 ] && [ "$1" = --prepare ] || exit 1
+[ -f /tmp/dpn-layout4.ready ] && [ ! -f /etc/dpn-vault-source ]
+[ "$(cat /etc/dpn-upgrade-layout)" = 4 ]
+grep -q ' /overlay ubifs ' /proc/mounts
+grep -q ' / overlay ' /proc/mounts
+[ "$(readlink /overlay/.fs_state)" = 2 ]
+[ ! -e /overlay/dpn-upgrade.pending ]
+[ ! -e /overlay/dpn-upgrade-next ]
+[ ! -e /overlay/dpn-upgrade-old-upper ]
+[ ! -L /etc/dropbear/authorized_keys ]
+[ ! -L /etc/dropbear/dropbear_ed25519_host_key ]
+[ -s /etc/dropbear/authorized_keys ]
+dropbearkey -y -f /etc/dropbear/dropbear_ed25519_host_key >/dev/null 2>&1
+. /lib/upgrade/dpn-reset-defaults.sh
+umask 077
+mkdir /overlay/dpn-upgrade-next
+dpn_reset_seed /overlay/dpn-upgrade-next/upper /etc /rom/etc
+sync
+printf 'v1\n' > /overlay/dpn-upgrade.pending
+sync
+logger -t button 'Defaults staged; reboot required; recovery and owner SSH identity preserved'

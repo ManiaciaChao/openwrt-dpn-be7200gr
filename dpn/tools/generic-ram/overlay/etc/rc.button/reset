@@ -1,0 +1,17 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-only
+# Keep the standard short press / five-second hold semantics. This board's
+# verified UBI boot needs a directory reset, not fstools raw volume erasure.
+[ -f /tmp/dpn-layout4.ready ] && [ ! -f /etc/dpn-vault-source ] || exit 0
+case "$ACTION" in
+ pressed) exit 5 ;;
+ timeout) logger -t button 'Release Reset to restore defaults (owner recovery keys retained)' ;;
+ released)
+  case "$SEEN" in ''|*[!0-9]*) exit 1;; esac
+  if [ "$SEEN" -lt 1 ]; then
+   sync && reboot
+  elif [ "$SEEN" -ge 5 ]; then
+   /usr/libexec/dpn-factory-reset --prepare && { sync; reboot; }
+  fi
+ ;;
+esac

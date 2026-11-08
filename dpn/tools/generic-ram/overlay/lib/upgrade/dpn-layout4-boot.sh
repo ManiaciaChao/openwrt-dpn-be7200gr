@@ -29,6 +29,10 @@ dpn_layout4_normal_boot() {
  mkdir -p /newroot /config-stage || return 1
  mount -t squashfs -o ro /dev/ubiblock0_0 /newroot || return 1
  mount -t ubifs ubi0:rootfs_data /config-stage || return 1
+ # A physical reset stages defaults on the existing data volume. Finish its
+ # directory transaction before mounting overlay, without formatting UBI.
+ . /lib/upgrade/dpn-config-commit.sh
+ dpn_config_commit /config-stage || return 1
  # Configuration must already have been committed by the migration installer.
  [ -d /config-stage/upper ] && [ -d /config-stage/work ] || return 1
  [ "$(readlink /config-stage/.fs_state)" = 2 ] || return 1
