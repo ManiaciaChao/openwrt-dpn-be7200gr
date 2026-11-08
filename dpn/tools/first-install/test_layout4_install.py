@@ -55,6 +55,15 @@ class InstallTests(unittest.TestCase):
             with self.assertRaises(FileExistsError): private_write(p, b'twice')
             self.assertEqual(p.read_bytes(), b'once')
 
+    def test_private_backup_session_cannot_be_created_inside_a_Git_checkout(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);(root/'.git').mkdir()
+            a=argparse.Namespace(session=root/'owner-session',action='prepare',host='192.0.2.1',
+                                 identity=Path('key'),known_hosts=Path('hosts'),execute=False)
+            with self.assertRaisesRegex(ValueError,'outside all Git'):
+                Installer(a)
+            self.assertFalse(a.session.exists())
+
     def test_no_execute_never_calls_remote_transaction(self):
         with tempfile.TemporaryDirectory() as d:
             a = argparse.Namespace(session=Path(d), action='verify', host='192.0.2.1', identity=Path('key'),

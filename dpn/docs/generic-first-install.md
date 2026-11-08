@@ -24,8 +24,10 @@ CD:53:53、512 MiB、4096+256 页/OOB、256 KiB 擦除块、空 BMT/RAWB、零�
 
 ## 首次安装
 
-1. 先导出所有者自己的原厂备份，参考 [原厂备份](stock-backup.md)。
-   准备电脑上的 Python 3、OpenSSH、age 与 age-keygen，并保管自己的 SSH 私钥。
+1. 准备电脑上的 Python 3、OpenSSH、age 与 age-keygen，并保管自己的 SSH 私钥。
+   如能登录原厂 Dropbear，可提前做额外备份，参考 [原厂备份](stock-backup.md)。
+   正常 Web 首装不要求原厂 root 凭据或 TTL；后面的 prepare 阶段会导出并验证
+   保留的原厂完整槽及每机数据，成功前不会回收它们。
 2. 电脑直连路由器 LAN1，断开路由器 WAN 与其他上联。不要接共享交换机进行默认
    DHCP 首装；安装期间保持供电。
 3. 用正常原厂网页账户登录固件升级页，上传 factory-web 一次，等待重启。
@@ -43,6 +45,12 @@ python3 tools/first-install/layout4_install.py prepare \
   --session OWNER_PRIVATE_SESSION --age-recipient OWNER_AGE_RECIPIENT \
   --age-identity OWNER_AGE_IDENTITY_FILE
 ```
+
+在 GitHub fork 中，上面的工具路径相对于 dpn/ 目录；可先 cd dpn。
+会话目录必须位于所有 Git checkout 之外，并使用持久磁盘，例如放到自己的
+本地私有备份目录中。age-keygen -o OWNER_AGE_IDENTITY_FILE 可生成备份密钥，
+age-keygen -y OWNER_AGE_IDENTITY_FILE 输出 prepare 所需的公开 recipient。
+SSH 密钥需可无交互使用；加密的客户端私钥可先加入自己的 ssh-agent。
 
 prepare 会读取每台设备自己的原厂完整槽、vendor 状态、bootloader、ART 和
 保留尾部，导出加密备份并实际解密逐字节比对。恢复资料在目标设备外私有生成，

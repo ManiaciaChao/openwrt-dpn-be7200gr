@@ -82,9 +82,11 @@ def parse_slot(line):
 class Installer:
     def __init__(self, args):
         self.a = args
-        self.p = args.session.resolve()
-        if self.p.is_symlink():
+        if args.session.is_symlink():
             raise ValueError('Session must be a real private directory')
+        self.p = args.session.resolve()
+        if any((parent/'.git').exists() for parent in (self.p, *self.p.parents)):
+            raise ValueError('Keep the private owner session outside all Git checkouts')
         if args.action == 'prepare':
             self.p.mkdir(mode=0o700, parents=True, exist_ok=False)
         st = self.p.stat()
