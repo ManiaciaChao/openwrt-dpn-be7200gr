@@ -46,7 +46,7 @@ cc=R/'openwrt/staging_dir/toolchain-aarch64_cortex-a53_gcc-14.4.0_musl/bin/aarch
 for source,name in [('tools/generic-ram/mk_session_initrd.c','mk-session-initrd'),('tools/generic-ram/ram_launch.c','ram-launch'),('tools/nand_readonly_dump.c','nand-reader')]:
     run([R/'tools/with_openwrt_env.sh',cc,'-Os','-static','-Wall','-Wextra',R/source,'-o',O/name])
 run(['bash',R/'tools/first-install/build-writer.sh'])
-for name in ['vault-check', 'image4-check', 'normal16', 'bootflag', 'provisioner', 'expanded-return', 'factory-read']:
+for name in ['vault-check', 'vault-build', 'image4-check', 'normal16', 'bootflag', 'provisioner', 'expanded-return', 'factory-read']:
     run(['bash', R/'tools/storage_layout'/('build-'+name+'.sh')])
 firmware=json.loads((R/'artifacts/offload/firmware-source.json').read_text())
 for spec in firmware['files']:

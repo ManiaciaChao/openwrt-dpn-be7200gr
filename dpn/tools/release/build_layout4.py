@@ -39,16 +39,22 @@ def main():
         '--root', root, '--output', profiles, '--build-id', a.build_id)
     run('python3', R/'tools/storage_layout/audit_profile.py', '--profile', profiles,
         '--output', profiles/'content-audit.json')
-    for name in ('vault-check','normal16','bootflag','provisioner','expanded-return','factory-read'):
+    for name in ('vault-check','vault-build','normal16','bootflag','provisioner','expanded-return','factory-read'):
         run('bash', R/'tools/storage_layout'/('build-'+name+'.sh'), 'host')
-    for name in ('test_vault.py','native_vault_test.py','test_bootflag.py','test_provisioner.py',
+    for name in ('test_vault.py','native_vault_test.py','test_vault_build.py','test_bootflag.py','test_provisioner.py',
                  'test_expanded_return.py','test_factory_read.py','test_config_permissions.py'):
         run('python3', R/'tools/storage_layout'/name)
     run('python3', R/'tools/storage_layout/test_normal16.py', '--profile', profiles)
     run('python3', R/'tools/first-install/test_layout4_install.py')
+    run('python3', R/'tools/first-install/test_factory_auto.py')
+    run('python3', R/'tools/release/test_installation_bundle.py')
     run('python3', R/'tools/generic-ram/test-buttons.py')
     run('python3', R/'tools/release/package_layout4_factory.py', '--kernel-output', kernel,
         '--root', root, '--profile', profiles, '--output', R/'build/layout4-factory')
+    run('python3', R/'tools/release/audit_layout4_factory.py', '--factory', R/'build/layout4-factory',
+        '--profile', profiles, '--output', R/'build/layout4-factory/content-audit.json')
+    run('python3', R/'tools/first-install/test_factory_runtime.py', '--root', R/'build/layout4-factory/installer-root',
+        '--output', R/'build/layout4-factory/runtime-smoke.json')
     run('python3', R/'tools/storage_layout/package_layout4.py', '--profile', profiles,
         '--output', R/'build/layout4-sysupgrade', '--build-id', a.build_id)
     out = a.output.resolve(); out.mkdir(parents=True)
@@ -65,7 +71,7 @@ def main():
     shutil.copytree(R/'LICENSES', out/'LICENSES')
     shutil.copy2(R/'LICENSE-STATUS.md', out/'LICENSE-STATUS.md')
     from package_layout4_set import add_installation_bundle
-    add_installation_bundle(out, R)
+    add_installation_bundle(out, R, 'automatic')
     print('LAYOUT4_BOTH_ARTIFACTS_ASSEMBLED_NO_DEVICE_OPERATION', out)
 
 if __name__ == '__main__':

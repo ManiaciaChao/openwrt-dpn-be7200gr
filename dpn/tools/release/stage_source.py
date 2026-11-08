@@ -24,21 +24,24 @@ files.extend(str(p.relative_to(R)) for p in (R/'tools/release/bootstrap').glob('
 # Public layout4 implementation only. Laboratory orchestration and receipts
 # deliberately remain outside the export.
 storage_sources = [
- 'vault.py','vault_check.c','native_io.h','image4.h','image4_check.c',
+ 'vault.py','vault_check.c','vault_build.c','native_io.h','image4.h','image4_check.c',
  'normal16_write.c','bootflag_select.c','expanded_stock_return.c',
  'provision_recovery.c','factory_read.c','build_profiles.py','package_layout4.py','audit_profile.py',
- 'build-vault-check.sh','build-image4-check.sh','build-normal16.sh',
+ 'build-vault-check.sh','build-vault-build.sh','build-image4-check.sh','build-normal16.sh',
  'build-bootflag.sh','build-provisioner.sh','build-expanded-return.sh',
  'build-factory-read.sh','test_vault.py','native_vault_test.py',
- 'test_factory_read.py','test_config_permissions.py','test_normal16.py',
+ 'test_factory_read.py','test_config_permissions.py','test_vault_build.py','test_normal16.py',
  'test_provisioner.py','test_bootflag.py','test_expanded_return.py',
 ]
 files.extend('tools/storage_layout/'+n for n in storage_sources)
+files.extend(['docs/automatic-first-install.md', 'docs/host-first-install.md'])
 files.extend(['tools/stock_return/test_inspect_image.py','tools/stock_return/inspect_image.py','docs/storage-expansion.md','docs/stock-backup.md','docs/buttons.md'])
 for n in ('local-standard-sysupgrade-v3.json','local-expanded-roundtrip-v2.json','local-final-coldboot-v1.json'):
  files.append('artifacts/storage-layout/'+n)
 if (R/'artifacts/storage-layout/generic-factory-Web-and-sysupgrade-RC2.json').is_file():
  files.append('artifacts/storage-layout/generic-factory-Web-and-sysupgrade-RC2.json')
+if (R/'artifacts/storage-layout/button-support-v1.json').is_file():
+ files.append('artifacts/storage-layout/button-support-v1.json')
 manifest={}
 for name in sorted(set(files)):
  src=R/name

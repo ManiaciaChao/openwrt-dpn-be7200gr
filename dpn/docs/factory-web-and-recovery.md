@@ -1,5 +1,10 @@
 # Factory Web and recovery validation
 
+The default source factory packager now produces the hardware-untested
+`automatic` installer described in [automatic first installation](automatic-first-install.md).
+All RC2 receipts below concern the legacy host-assisted mode, including its
+external backup and recovery reboot checkpoint; they do not qualify the new flow.
+
 Current public format: a layout4 factory RAM first installer, plus a matching
 standard sysupgrade image. See [installation](generic-first-install.md).
 

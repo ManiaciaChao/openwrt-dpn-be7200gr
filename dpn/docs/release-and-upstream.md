@@ -12,11 +12,16 @@ recovery uses 16 MiB, and each device has a 4 MiB identity/state vault. Two data
 extents form 408 MiB raw UBI: static SquashFS root and dynamic UBIFS rootfs_data.
 ART and the entire 64 MiB vendor-reserved tail remain protected.
 
-The factory-Web package boots a wired RAM installer. It contains generic normal
-and recovery payloads, not an experimental unit's vault or calibration. Owners
-configure their own root password/public key, export a decrypt-verified external
-backup and provision recovery. An actual independent NAND recovery boot must be
-verified before reclaiming the old filesystem/vendor/configuration area.
+The default factory-Web package boots a wired RAM installer and installs on the
+device automatically. It contains generic normal and recovery payloads, not an
+experimental unit's vault or calibration. Per-device identities and the vault
+are generated on the target. Full stock backup is an optional operation performed
+separately before flashing; there is no host-tool or intermediate Web setup step.
+Recovery/vault NAND readback precedes migration, which uses the standard RAM
+upgrade backend without an intermediate recovery reboot. See
+[automatic first installation](automatic-first-install.md) for that changed
+validation boundary. Published RC2 remains the legacy host-assisted installer
+with an external backup and independent recovery boot before migration.
 The normal first-install payload is identical to the matching sysupgrade payload.
 
 The original boot profile accepts the public-input FIP wrapper with empty DER
@@ -27,6 +32,9 @@ OEM 50 MiB slot; the final normal and recovery images each remain bounded by
 installers and are not the public factory download.
 
 ## Validation boundary
+
+The automatic installer is a new candidate pending hardware tests. None of the
+RC2 or earlier hardware receipts below qualifies its new installation sequence.
 
 The local layout4 migration, unassisted standard sysupgrade, independent SSH
 recovery, full original stock/vendor restoration, original Web recovery reinstall,

@@ -42,7 +42,9 @@ This fork carries the DPN-BE7200GR installation and upgrade implementation under
 bootloader and compact SSH recovery, with a 408 MiB raw UBI data region.
 
 Download the tested [RC2 installation bundle and both firmware formats](https://github.com/ManiaciaChao/openwrt-dpn-be7200gr/releases/tag/dpn-layout4-rc2).
-Read the release qualification notes before installing.
+RC2 uses the legacy host-assisted procedure. The automatic installer in current
+sources is a separate, hardware-untested candidate. Read the matching release
+instructions before installing.
 
 Start with [installation](dpn/docs/generic-first-install.md),
 [build instructions](DPN-BE7200GR.md) and [owner backup instructions](dpn/docs/stock-backup.md).
@@ -65,12 +67,12 @@ Build from pinned sources, with Nix installed:
 
 ```sh
 python3 dpn/tools/release/prepare_clean_base.py dpn/build/release --git-cache . --build --jobs 8
-dpn/build/release/tools/with_openwrt_env.sh python3 dpn/build/release/tools/release/build_layout4.py --build-id dpn-layout4-rc2
+dpn/build/release/tools/with_openwrt_env.sh python3 dpn/build/release/tools/release/build_layout4.py --build-id dpn-layout4-auto-v1
 ```
 
 Outputs are `dpn-be7200gr-factory-web.bin` and
 `dpn-be7200gr-sysupgrade.bin` under `dpn/build/release/dist/layout4-candidate/`.
-The first is an OEM Web RAM installer; the second updates an installed layout4
+The first automatically installs after OEM Web upload; the second updates an installed layout4
 system. Device-specific backups are never part of the repository or downloads.
 This fork is not an upstream-accepted device definition. Candidate qualification
 is recorded separately; producing files does not establish hardware acceptance.

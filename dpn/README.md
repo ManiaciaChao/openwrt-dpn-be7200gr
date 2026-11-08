@@ -9,13 +9,16 @@ credentials, calibration dumps or original firmware backups belong in this repo.
 The intended public downloads are:
 
 - **dpn-be7200gr-factory-web.bin**: OEM Web upload; boots a RAM first installer,
-  exports/decrypt-verifies the owner's backup before compact-recovery provisioning
-  and layout migration.
+  then automatically provisions per-device recovery and installs OpenWrt without
+  host tools or an intermediate installation page. Full stock backup is optional
+  and must be performed separately before flashing.
 - **dpn-be7200gr-sysupgrade.bin**: normal updates of an installed layout4 system,
   preserving settings and SSH identity.
 
 Read [installation](docs/generic-first-install.md), [stock backups](docs/stock-backup.md)
-and [storage layout](docs/storage-expansion.md). A complete local expanded-layout
+and [storage layout](docs/storage-expansion.md). The automatic installer is a new,
+hardware-untested candidate; the published RC2 still uses the
+[legacy host-assisted procedure](docs/host-first-install.md). A complete local expanded-layout
 stock return/Web recovery reinstall/remigration and final physical cold boot have
 passed. The RC2 generic factory RAM installer, independent NAND recovery, expanded
 normal boot, matching standard sysupgrade and final physical cold boot have now

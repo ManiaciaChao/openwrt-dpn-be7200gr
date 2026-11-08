@@ -27,6 +27,8 @@ def main():
     p.add_argument('--root', type=Path, required=True)
     p.add_argument('--profile', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
+    p.add_argument('--first-install', choices=['automatic', 'host'], default='automatic',
+                   help='Automatic on-device installation (default), or legacy host-driven RAM setup')
     a = p.parse_args()
     k, source, profiles, out = (x.resolve() for x in (a.kernel_output, a.root, a.profile, a.output))
     km = json.loads((k/'manifest.json').read_text())
@@ -55,7 +57,25 @@ def main():
     # This empty password is confined to the direct-LAN RAM setup environment.
     (root/'etc/shadow').write_text('\n'.join('root::0:0:99999:7:::' if x.startswith('root:') else x for x in shadow.splitlines())+'\n')
     (root/'etc/shadow').chmod(0o600)
-    (root/'etc/dpn-factory-installer').write_text('RAM_ONLY_CONFIGURE_PASSWORD_AND_PUBLIC_KEY_THEN_EXPORT_BACKUP\n')
+    automatic = a.first_install == 'automatic'
+    (root/'etc/dpn-factory-installer').write_text('AUTOMATIC_FIRST_INSTALL\n' if automatic else 'RAM_ONLY_CONFIGURE_PASSWORD_AND_PUBLIC_KEY_THEN_EXPORT_BACKUP\n')
+    (root/'etc/dpn-factory-auto').unlink(missing_ok=True)
+    if automatic:
+        # Refuse a stale root instead of shipping a silently non-automatic image.
+        for name in ('usr/libexec/dpn-vault-build', 'usr/libexec/dpn-factory-auto',
+                     'lib/upgrade/dpn-factory-auto.sh', 'etc/init.d/dpn_factory_auto'):
+            if not (root/name).is_file():
+                raise ValueError('Missing automatic installer input: '+name)
+        for name in ('usr/libexec/dpn-factory-auto', 'lib/upgrade/dpn-factory-auto.sh',
+                     'etc/init.d/dpn_factory_auto'):
+            if (root/name).read_bytes() != (R/'tools/generic-ram/overlay'/name).read_bytes():
+                raise ValueError('Stale automatic installer source: '+name)
+        if (root/'usr/libexec/dpn-vault-build').read_bytes() != (R/'build/storage-layout/dpn-vault-build').read_bytes():
+            raise ValueError('Stale native vault builder')
+        (root/'etc/dpn-factory-auto').write_text('automatic-v1\n')
+        service = root/'etc/rc.d/S98dpn_factory_auto'
+        service.unlink(missing_ok=True)
+        service.symlink_to('../init.d/dpn_factory_auto')
     (root/'etc/config/network').write_text('''config interface 'loopback'
  option device 'lo'
  option proto 'static'
@@ -102,6 +122,8 @@ config dhcp 'lan'
     for name in ('normal.fip', 'recovery.fip', 'rootfs.squashfs'):
         shutil.copy2(profiles/name, payload/name)
     shutil.copy2(profiles/'manifest.json', payload/'manifest.json')
+    (payload/'SHA256SUMS').write_text(''.join(hashlib.sha256((payload/name).read_bytes()).hexdigest()+'  '+name+'\n'
+                                            for name in ('normal.fip', 'recovery.fip', 'rootfs.squashfs')))
     # These non-.sh commands are explicit entrypoints, never sourced as hooks.
     for name in ('dpn-factory-provision', 'dpn-factory-migrate'):
         (root/'lib/upgrade'/name).chmod(0o755)
@@ -128,6 +150,8 @@ config dhcp 'lan'
         run('fdtput', '-t', 'x', dt, '/dpn-layout4', name, format(value, 'x'))
     run('fdtput', '-t', 's', dt, '/dpn-layout4', 'write-profile', 'provision')
     run('fdtput', dt, '/dpn-layout4', 'factory-first-install')
+    if automatic:
+        run('fdtput', dt, '/dpn-layout4', 'factory-auto-install')
     run('fdtput', '-t', 'bx', dt, '/dpn-layout4', 'installer-rootfs-sha256', *[fs_sha[i:i+2] for i in range(0,64,2)])
     its = '''/dts-v1/; / { description="DPN-BE7200GR factory RAM first installer"; #address-cells=<1>;
 images {
@@ -146,8 +170,13 @@ images {
     (out/'SHA256SUMS').write_text(sha+'  dpn-be7200gr-factory-web.bin\n')
     (out/'manifest.json').write_text(json.dumps({
         'layout': 4, 'factory_RAM_first_installer': True, 'bytes': len(blob), 'SHA256': sha,
-        'OEM_slot_limit_bytes': 0x3200000, 'boot_does_not_format_or_provision': True,
-        'external_owner_backup_required_before_layout_migration': True,
+        'OEM_slot_limit_bytes': 0x3200000, 'boot_does_not_format_or_provision': not automatic,
+        'first_install_mode': a.first_install,
+        'automatic_install_after_boot': automatic,
+        'external_owner_backup_required_before_layout_migration': not automatic,
+        'full_stock_backup_created_by_installer': False,
+        'recovery_readback_before_migration': True,
+        'independent_recovery_boot_before_migration': not automatic,
         'installer_rootfs_SHA256': fs_sha, 'kernel_audit': kernel_audit,
         'normal_recovery_payload_manifest': pm, 'private_device_inputs_embedded': False,
         'hardware_factory_installer_tested': False, 'public_release_qualified': False,

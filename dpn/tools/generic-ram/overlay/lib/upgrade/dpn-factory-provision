@@ -1,6 +1,6 @@
 #!/bin/sh
 # SPDX-License-Identifier: GPL-2.0-only
-# Called once by the owner-side installer after verified external backup.
+# Called once by the legacy owner tool or the automatic RAM installer.
 set -eu
 [ "$#" = 2 ]
 candidate=$1

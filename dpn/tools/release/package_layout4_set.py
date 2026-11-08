@@ -8,24 +8,32 @@ from pathlib import Path
 import shutil
 import zipfile
 
-def add_installation_bundle(output, source):
-    """Ship the two small owner-side Python sources with the firmware set.
-    Users need not clone the entire OpenWrt source just to finish first install.
-    """
-    for name in ('tools/first-install/layout4_install.py','tools/storage_layout/vault.py'):
-        dest=output/name;dest.parent.mkdir(parents=True,exist_ok=True)
-        shutil.copy2(source/name,dest)
-    shutil.copy2(source/'docs/generic-first-install.md',output/'INSTALL.md')
+def add_installation_bundle(output, source, installation_mode='host'):
+    """Ship instructions matching the actual artifact's installation mode."""
+    if installation_mode == 'host':
+        for name in ('tools/first-install/layout4_install.py','tools/storage_layout/vault.py'):
+            dest=output/name;dest.parent.mkdir(parents=True,exist_ok=True)
+            shutil.copy2(source/name,dest)
+    manual = 'generic-first-install.md' if installation_mode == 'automatic' else 'host-first-install.md'
+    shutil.copy2(source/'docs'/manual,output/'INSTALL.md')
     shutil.copy2(source/'docs/stock-backup.md',output/'stock-backup.md')
+    shutil.copy2(source/'docs/host-first-install.md',output/'host-first-install.md')
+    shutil.copy2(source/'docs/generic-first-install.md',output/'generic-first-install.md')
+    shutil.copy2(source/'docs/automatic-first-install.md',output/'automatic-first-install.md')
+    description = '''an installed layout4 OpenWrt system. This automatic factory image installs on
+the router without host tools or an intermediate Web installation page. Full
+stock backup is optional and must be made separately before flashing. The new
+automatic installer has not yet passed hardware qualification.
+''' if installation_mode == 'automatic' else '''an installed layout4 OpenWrt system. This legacy RAM installer requires your own
+LuCI password/public key and an external verified backup before persistence.
+Run the included tools/first-install/layout4_install.py from this extracted
+directory; Python 3, OpenSSH and age are required on the owner's computer.
+'''
     (output/'README.txt').write_text('''D-Link DPN-BE7200GR layout4 candidate
 
 Read INSTALL.md before uploading either firmware file.
 factory-web.bin is for the original OEM Web interface; sysupgrade.bin is for
-an installed layout4 OpenWrt system. The RAM first installer requires your own
-LuCI password/public key and an external verified backup before persistence.
-Run the included tools/first-install/layout4_install.py from this extracted
-directory; Python 3, OpenSSH and age are required on the owner's computer.
-Private device backups and credentials are not included in this download.
+'''+description+'''Private device backups and credentials are not included in this download.
 Preserve LICENSES/ and LICENSE-STATUS.md when redistributing these artifacts.
 ''')
     included=[p for p in output.rglob('*') if p.is_file() and p.suffix!='.zip' and p.name!='ZIP_SHA256SUMS']
@@ -88,7 +96,8 @@ def main():
         'qualification_scope': qualification.get('qualification_scope') if qualification else None,
         'production_release_qualified': False, 'private_factory_backup_included': False,
         'payloads': receipts}, indent=2)+'\n')
-    add_installation_bundle(a.output, source)
+    mode = receipts.get('dpn-be7200gr-factory-web.bin', {}).get('first_install_mode', 'host')
+    add_installation_bundle(a.output, source, mode)
     print('LAYOUT4_PUBLIC_ARTIFACT_SET_COLLECTED', a.output)
 
 if __name__ == '__main__':

@@ -25,14 +25,14 @@ for src in (C/'overlay').rglob('*'):
  dst=ROOT/src.relative_to(C/'overlay');dst.parent.mkdir(parents=True,exist_ok=True)
  if dst.exists() or dst.is_symlink():dst.unlink()
  shutil.copy2(src,dst)
-for name in ['dpn_factory_ready','dpn_wifi_ram','dpn_generic_ready']:
- n={'dpn_factory_ready':'17','dpn_wifi_ram':'18','dpn_generic_ready':'99'}[name]
+for name in ['dpn_factory_ready','dpn_wifi_ram','dpn_factory_auto','dpn_generic_ready']:
+ n={'dpn_factory_ready':'17','dpn_wifi_ram':'18','dpn_factory_auto':'98','dpn_generic_ready':'99'}[name]
  p=ROOT/'etc/rc.d'/('S'+n+name)
  if p.is_symlink() or p.exists():p.unlink()
  p.symlink_to('../init.d/'+name)
 (ROOT/'etc/modules.d/mt7996e').write_text('')
 if a.layout_v4_tools:
- for tool in ['dpn-vault-check','dpn-image4-check','dpn-normal16-write','dpn-bootflag-select','dpn-factory-read','dpn-provision-recovery','dpn-expanded-stock-return']:
+ for tool in ['dpn-vault-check','dpn-vault-build','dpn-image4-check','dpn-normal16-write','dpn-bootflag-select','dpn-factory-read','dpn-provision-recovery','dpn-expanded-stock-return']:
   shutil.copy2(R/'build/storage-layout'/tool,ROOT/'usr/libexec'/tool)
 else:
  (ROOT/'usr/libexec/dpn-vault-check').unlink(missing_ok=True)
