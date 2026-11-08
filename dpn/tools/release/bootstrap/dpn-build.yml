@@ -46,13 +46,17 @@ jobs:
           sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
           sudo apt-get update
           sudo apt-get install --yes nix-bin
+          sudo groupadd --force nix-users
+          sudo usermod -a -G nix-users "$USER"
           printf 'experimental-features = nix-command flakes\ntrusted-users = root %s\n' "$USER" | sudo tee -a /etc/nix/nix.conf >/dev/null
           sudo systemctl restart nix-daemon.service
-          nix --version
+          sudo chgrp nix-users /nix/var/nix/daemon-socket /nix/var/nix/daemon-socket/socket
+          sudo chmod g+rx /nix/var/nix/daemon-socket
+          sudo chmod g+rw /nix/var/nix/daemon-socket/socket
+          sg nix-users -c 'nix-store --add README.md >/dev/null'
       - name: Build pinned base and both candidate formats
         run: |
-          python3 dpn/tools/release/prepare_clean_base.py dpn/build/release --build --jobs "$BUILD_JOBS"
-          dpn/build/release/tools/with_openwrt_env.sh python3 dpn/build/release/tools/release/build_layout4.py --build-id "$BUILD_ID"
+          sg nix-users -c 'python3 dpn/tools/release/prepare_clean_base.py dpn/build/release --build --jobs "$BUILD_JOBS" && dpn/build/release/tools/with_openwrt_env.sh python3 dpn/build/release/tools/release/build_layout4.py --build-id "$BUILD_ID"'
       - name: Upload candidates and provenance, without publishing a release
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:

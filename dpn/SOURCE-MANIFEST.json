@@ -129,7 +129,7 @@
     "tools/openwrt-shell.nix": "d8a779374f9564fac793d2ae969162fc5b17b7fde5aef98327dff686920651dc",
     "tools/release/assemble_clean.py": "6b2d525795730327d2cf516b376b74619e4908c698f7a6a113e525b34bf07872",
     "tools/release/bootstrap/001-tools-use-env-bash.patch": "46bc0710729056c4556aa26d7a455b87bae07fb35ade7ca4a1e264014efa0fdb",
-    "tools/release/bootstrap/dpn-build.yml": "2e5e77f8e4c808e6fea29648857dbc650dd01ee197d2b9f57c78045ae5956f0d",
+    "tools/release/bootstrap/dpn-build.yml": "b55577e85bcabf68ed889108cc55b69276d2855f713e7b18e65a4d63ba30f7ed",
     "tools/release/bootstrap/ram-profile.mk": "92fdebbb93e24451725de2707785ef8398c8d9be58fe1cf382733c8628eac473",
     "tools/release/build_clean_helpers.py": "f9da8e142abbe1c1b2bb1dd765b6e2ab2d99ffe3f0b81a9a568219f56ef8fd19",
     "tools/release/build_layout4.py": "e9af0d1c3b9be5a8681f439645084bbbd484c58d5d3736d241fa84a0c2ef1054",
