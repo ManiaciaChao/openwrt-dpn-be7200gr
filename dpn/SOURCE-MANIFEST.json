@@ -137,7 +137,7 @@
     "tools/release/check_source_stage.py": "3d55282e218746889eebb39e9621edd7469d055c4f46cb3b83deea93732a60a4",
     "tools/release/package_formats.py": "2c8ee5d5c1659c987c59e6326f3d5d73912f33a098e8dd19698db00f8c3ea4e8",
     "tools/release/package_layout4_factory.py": "951e30caa06818103006325e8efed8779afad18db58e6e81e17b4e9fc37b45fc",
-    "tools/release/package_layout4_set.py": "8d8e88a7d82eac7cd9e1dfa375915b37907ab3b464a34ee7cf25eb9629239f41",
+    "tools/release/package_layout4_set.py": "19aa0b87fa02e1a96b1c29316104b4e70ff7f732aebbc2742fa619e4e90571c0",
     "tools/release/prepare_clean_base.py": "f45960c76c19447023260dfda03047428346dfa40de963a41568513f94341726",
     "tools/release/prepare_fork.py": "8cf9021b19992ed2b0188fedd607f3c8033d6ebf4fd61324e486d8837388705f",
     "tools/release/stage_source.py": "147fd32111a3a37a4d74f9c06639cd213106be8bb2deba58405bbf88e3df7399",

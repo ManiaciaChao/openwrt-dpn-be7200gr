@@ -43,6 +43,7 @@ def main():
     p.add_argument('--sysupgrade', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--format', choices=['both', 'factory-web', 'sysupgrade'], default='both')
+    p.add_argument('--qualification', type=Path, help='Reviewed hardware receipt bound to these exact image hashes')
     a = p.parse_args()
     selected = []
     if a.format != 'sysupgrade': selected.append((a.factory, 'dpn-be7200gr-factory-web.bin'))
@@ -60,6 +61,19 @@ def main():
         upgrade = receipts['dpn-be7200gr-sysupgrade.bin']
         if factory['profiles']['normal']['SHA256'] != upgrade['normal_FIP_SHA256'] or factory['UBI_rootfs_SHA256'] != upgrade['rootfs_SHA256']:
             raise ValueError('Factory installer and sysupgrade contain different normal payloads')
+    qualification=None
+    if a.qualification:
+        qualification=json.loads(a.qualification.read_text())
+        for name,data in blobs.items():
+            expected=qualification['files'][name]
+            if expected['SHA256']!=hashlib.sha256(data).hexdigest() or expected['bytes']!=len(data):
+                raise ValueError('Hardware receipt belongs to a different firmware image')
+        required=('actual_normal_original_Web_upload_booted_generic_RAM_installer',
+                  'actual_independent_NAND_recovery_boot_and_owner_SSH_passed',
+                  'exact_matching_standard_sysupgrade_without_manual_checkpoint_passed',
+                  'physical_OFF_5s_ON_after_final_upgrade_passed')
+        if not all(qualification.get(k) is True for k in required):
+            raise ValueError('Incomplete hardware qualification receipt')
     a.output.mkdir(parents=True, exist_ok=False)
     for name, data in blobs.items():
         (a.output/name).write_bytes(data)
@@ -67,8 +81,12 @@ def main():
     shutil.copytree(source/'LICENSES', a.output/'LICENSES')
     shutil.copy2(source/'LICENSE-STATUS.md', a.output/'LICENSE-STATUS.md')
     (a.output/'SHA256SUMS').write_text(''.join(hashlib.sha256(b).hexdigest()+'  '+n+'\n' for n,b in blobs.items()))
+    if qualification:
+        shutil.copy2(a.qualification,a.output/'qualification.json')
     (a.output/'package-manifest.json').write_text(json.dumps({'layout': 4, 'format': a.format,
-        'public_release_qualified': False, 'private_factory_backup_included': False,
+        'public_release_qualified': qualification is not None,
+        'qualification_scope': qualification.get('qualification_scope') if qualification else None,
+        'production_release_qualified': False, 'private_factory_backup_included': False,
         'payloads': receipts}, indent=2)+'\n')
     add_installation_bundle(a.output, source)
     print('LAYOUT4_PUBLIC_ARTIFACT_SET_COLLECTED', a.output)
