@@ -37,3 +37,6 @@ This fetches the pinned upstream commit and adds only reviewed DPN sources under
 `dpn/`. It never copies private workspace history or pushes a remote. The parent
 research workspace is not the repository to publish. See
 [release/upstream status](docs/release-and-upstream.md) and LICENSE-STATUS.md.
+
+Confirmed status LED support and its live-backport validation boundary are described in
+[status LEDs](docs/status-leds.md). Existing RC2 downloads predate this change.

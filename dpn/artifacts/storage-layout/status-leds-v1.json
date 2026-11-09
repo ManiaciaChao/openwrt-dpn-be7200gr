@@ -1,0 +1,32 @@
+{
+  "schema": "dpn-status-leds-v1",
+  "date": "2026-11-09",
+  "running_kernel_build": "dpn-layout4-rc3-buttons",
+  "confirmed_GPIOs": {
+    "net": 20,
+    "wlan2g": 15,
+    "wlan5g": 13,
+    "mesh": 22
+  },
+  "unknown_Power_and_PHY_control_GPIOs_excluded": true,
+  "four_native_GPIO_LED_class_devices_registered": true,
+  "NET_and_wireless_kernel_netdev_triggers_enabled": true,
+  "NET_trigger_tracks_uplink_not_Internet_probe": true,
+  "WPS_timer_500ms_active_and_off_on_cancel_passed": true,
+  "wireless_actual_off_on_LED_test_passed": true,
+  "service_from_unloaded_driver_state_passed": true,
+  "default_config_second_run_preserves_owner_config_byte_identical": true,
+  "owner_visual_confirmation_matches": true,
+  "wireless_configuration_restored_byte_identical": true,
+  "local_owner_default_SSH_key_login_passed": true,
+  "SSH_password_authentication_remains_disabled": true,
+  "Power_cycle_tested": false,
+  "NAND_firmware_or_bootloader_write_requested": false,
+  "persistent_current_system_overlay_backport": true,
+  "native_DT_compiled_and_GPIOs_verified": true,
+  "new_full_factory_and_sysupgrade_artifacts_built_or_published": false,
+  "module_SHA256": {
+    "leds-gpio.ko": "495954e4cef68131c47ee24e757a7375d8b6ef377aad5c14ff730ede5849e5c0",
+    "dpn_led_board.ko": "c239dbba68d357afa65f2338718ce7fdb139a7920a39ffae038445b2c05de2c4"
+  }
+}

@@ -25,8 +25,8 @@ for src in (C/'overlay').rglob('*'):
  dst=ROOT/src.relative_to(C/'overlay');dst.parent.mkdir(parents=True,exist_ok=True)
  if dst.exists() or dst.is_symlink():dst.unlink()
  shutil.copy2(src,dst)
-for name in ['dpn_factory_ready','dpn_wifi_ram','dpn_generic_ready']:
- n={'dpn_factory_ready':'17','dpn_wifi_ram':'18','dpn_generic_ready':'99'}[name]
+for name in ['dpn_factory_ready','dpn_wifi_ram','dpn_led_status','dpn_generic_ready']:
+ n={'dpn_factory_ready':'17','dpn_wifi_ram':'18','dpn_led_status':'97','dpn_generic_ready':'99'}[name]
  p=ROOT/'etc/rc.d'/('S'+n+name)
  if p.is_symlink() or p.exists():p.unlink()
  p.symlink_to('../init.d/'+name)

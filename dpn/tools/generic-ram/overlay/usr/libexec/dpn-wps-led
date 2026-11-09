@@ -1,0 +1,44 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-only
+# Network LEDs use kernel netdev triggers. Only the AP WPS window needs ubus.
+led=/sys/class/leds/mesh
+[ -d "$led" ] || exit 0
+last=
+ours=0
+off() {
+ [ "$ours" = 1 ] || return 0
+ [ "$(uci -q get system.dpn_mesh.sysfs)" = mesh ] || return 0
+ [ "$(uci -q get system.dpn_mesh.trigger)" = none ] || return 0
+ echo none > "$led/trigger"
+ echo 0 > "$led/brightness"
+}
+trap 'off; exit 0' INT TERM
+trap off EXIT
+while :; do
+ if [ "$(uci -q get system.dpn_mesh.sysfs)" != mesh ] ||
+    [ "$(uci -q get system.dpn_mesh.trigger)" != none ]; then
+  # Let the normal LuCI LED configuration own any custom trigger.
+  ours=0
+  last=
+  sleep 2
+  continue
+ fi
+ active=0
+ for bss in $(ubus -S -t 1 list 'hostapd.*' 2>/dev/null); do
+  status=$(ubus -S -t 1 call "$bss" wps_status 2>/dev/null) || continue
+  [ "$(printf '%s' "$status" | jsonfilter -e '@.pbc_status')" = Active ] && active=1
+ done
+ if [ "$active" != "$last" ]; then
+  if [ "$active" = 1 ]; then
+   echo timer > "$led/trigger"
+   echo 500 > "$led/delay_on"
+   echo 500 > "$led/delay_off"
+  else
+   echo none > "$led/trigger"
+   echo 0 > "$led/brightness"
+  fi
+  ours=1
+  last="$active"
+ fi
+ sleep 2
+done

@@ -7,3 +7,7 @@ openwrt/
 dist/
 release-stage/
 tmp/
+
+# Python test caches
+__pycache__/
+*.py[cod]

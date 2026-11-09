@@ -11,6 +11,14 @@
 	model = "D-Link DPN-BE7200GR (experimental RAM only)";
 	compatible = "dlink,dpn-be7200gr-ram", "airoha,an7581", "airoha,en7581";
 
+	leds {
+		compatible = "gpio-leds";
+		led_net { label = "net"; gpios = <&en7581_pinctrl 20 GPIO_ACTIVE_LOW>; default-state = "off"; };
+		led_wlan2g { label = "wlan2g"; gpios = <&en7581_pinctrl 15 GPIO_ACTIVE_LOW>; default-state = "off"; };
+		led_wlan5g { label = "wlan5g"; gpios = <&en7581_pinctrl 13 GPIO_ACTIVE_LOW>; default-state = "off"; };
+		led_mesh { label = "mesh"; gpios = <&en7581_pinctrl 22 GPIO_ACTIVE_LOW>; default-state = "off"; };
+	};
+
 	keys {
 		compatible = "gpio-keys-polled";
 		poll-interval = <20>;

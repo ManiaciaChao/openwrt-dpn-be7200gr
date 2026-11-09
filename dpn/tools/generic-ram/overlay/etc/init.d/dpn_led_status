@@ -1,0 +1,20 @@
+#!/bin/sh /etc/rc.common
+# SPDX-License-Identifier: GPL-2.0-only
+START=97
+USE_PROCD=1
+start_service() {
+ # A live backport may supply matching modules for the old kernel, which has
+ # no LED DT nodes. New images use the ordinary built-in gpio-leds/DT path.
+ if [ ! -d /sys/class/leds/mesh ]; then
+  local modules=/lib/modules/$(uname -r)
+  [ -f "$modules/dpn_led_board.ko" ] || return 0
+  [ -d /sys/module/leds_gpio ] || insmod "$modules/leds-gpio.ko" || return 1
+  [ -d /sys/module/dpn_led_board ] || insmod "$modules/dpn_led_board.ko" || return 1
+  /etc/init.d/led start
+ fi
+ [ -d /sys/class/leds/mesh ] || return 0
+ procd_open_instance
+ procd_set_param command /usr/libexec/dpn-wps-led
+ procd_set_param respawn 3600 5 5
+ procd_close_instance
+}

@@ -41,6 +41,7 @@ if (R/'artifacts/storage-layout/generic-factory-Web-and-sysupgrade-RC2.json').is
  files.append('artifacts/storage-layout/generic-factory-Web-and-sysupgrade-RC2.json')
 if (R/'artifacts/storage-layout/button-support-v1.json').is_file():
  files.append('artifacts/storage-layout/button-support-v1.json')
+files.extend(['docs/status-leds.md','artifacts/storage-layout/status-leds-v1.json'])
 manifest={}
 for name in sorted(set(files)):
  src=R/name

@@ -47,6 +47,7 @@ def main():
     run('python3', R/'tools/storage_layout/test_normal16.py', '--profile', profiles)
     run('python3', R/'tools/first-install/test_layout4_install.py')
     run('python3', R/'tools/generic-ram/test-buttons.py')
+    run('python3', R/'tools/generic-ram/test-leds.py')
     run('python3', R/'tools/release/package_layout4_factory.py', '--kernel-output', kernel,
         '--root', root, '--profile', profiles, '--output', R/'build/layout4-factory')
     run('python3', R/'tools/storage_layout/package_layout4.py', '--profile', profiles,

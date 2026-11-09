@@ -1,0 +1,29 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-only
+set -e
+case "$(cat /tmp/sysinfo/board_name)" in
+ dlink,dpn-be7200gr|dlink,dpn-be7200gr-ram) ;;
+ *) exit 0;;
+esac
+add_led() {
+ local section="$1" label="$2" sysfs="$3" device="$4"
+ # Existing owner choices take precedence, including custom triggers.
+ uci -q get "system.$section" >/dev/null && return 0
+ uci set "system.$section=led"
+ uci set "system.$section.name=$label"
+ uci set "system.$section.sysfs=$sysfs"
+ uci set "system.$section.default=0"
+ if [ -n "$device" ]; then
+  uci set "system.$section.trigger=netdev"
+  uci set "system.$section.dev=$device"
+  uci set "system.$section.mode=link tx rx"
+ else
+  uci set "system.$section.trigger=none"
+ fi
+}
+add_led dpn_net 'NET uplink' net wan10
+add_led dpn_wlan2g 'Wi-Fi 2.4 GHz' wlan2g phy0.0-ap0
+add_led dpn_wlan5g 'Wi-Fi 5 GHz' wlan5g phy0.1-ap0
+add_led dpn_mesh 'Mesh / WPS' mesh ''
+uci commit system
+exit 0
